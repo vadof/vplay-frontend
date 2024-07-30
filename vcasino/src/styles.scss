@@ -1,0 +1,50 @@
+@import 'bootstrap/scss/bootstrap';
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
+
+:root {
+  --white-color: #ffffff;
+  --dark-color: #1c1f24;
+  --gray-color: #272a2f;
+  --yellow-color: #f3ba2f;
+  --yellow-shadow: #fab82299;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--dark-color);
+  color: var(--white-color);
+  margin: 0;
+  font-family: "Roboto Flex", sans-serif;
+}
+
+.btn-primary {
+  background-color: var(--yellow-color);
+  color: var(--dark-color);
+  border: none;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  transition: .4s ease;
+
+  &:hover {
+    background-color: var(--gray-color);
+    color: var(--yellow-color);
+  }
+}
+
+.btn-shadow {
+  &:hover {
+    box-shadow: 0 0 35px var(--yellow-shadow);
+  }
+}
+
+.link {
+  color: var(--yellow-color);
+
+  &:hover {
+    color: var(--yellow-shadow);
+  }
+}

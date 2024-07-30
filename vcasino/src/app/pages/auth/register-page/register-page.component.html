@@ -1,0 +1,52 @@
+<div class="container d-flex align-items-center justify-content-center">
+  <form [formGroup]="registerForm" (ngSubmit)="register()" class="w-50 text-color-primary">
+
+    <div class="mb-3">
+      <label for="firstname" class="form-label">FirstName</label>
+      <input type="text" class="form-control" id="firstname" formControlName="firstname">
+    </div>
+
+    <div class="mb-3">
+      <label for="lastname" class="form-label">LastName</label>
+      <input type="text" class="form-control" id="lastname" formControlName="lastname">
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" formControlName="email" aria-describedby="emailHelp">
+      <div *ngIf="registerForm.controls.email.invalid
+                  && (registerForm.controls.email.dirty || registerForm.controls.email.touched)"
+           class="text-danger mt-2">
+        <div *ngIf="registerForm.controls.email.errors?.['pattern']">
+          Invalid email!
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" minlength="6" id="password" formControlName="password">
+
+      <div *ngIf="registerForm.controls.password.invalid
+                  && (registerForm.controls.password.dirty || registerForm.controls.password.touched)"
+           class="text-danger mt-2">
+        <div *ngIf="registerForm.controls.password.errors?.['minlength']">
+          Password min length is 8 symbols!
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+      <strong>{{errorMessage}}</strong>
+    </div>
+
+    <div class="text-center mt-3">
+      <div>Already have an account?
+        <a class="link" routerLink="/login">Login</a>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mt-3 mb-3">SIGN UP</button>
+
+  </form>
+</div>
