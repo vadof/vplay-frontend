@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {API_URL} from "../config/constants";
 import {AuthResponse} from "../models/AuthReposnse";
 import { Observable } from "rxjs";
+import { ICountry } from "../models/ICountry";
 
 const AUTH_API = `${API_URL}/v1/users/auth`
 
@@ -20,6 +21,10 @@ export class AuthService {
   constructor(
     private http: HttpClient
   ) {}
+
+  public getCountries(): Observable<ICountry[]> {
+    return this.http.get<ICountry[]>(`${AUTH_API}/countries`, httpOptions);
+  }
 
   public login(request: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${AUTH_API}/login`, request, httpOptions);

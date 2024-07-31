@@ -26,7 +26,7 @@ export class LoginPageComponent {
     private storage: TokenStorageService
   ) {
     this.loginForm = new FormGroup({
-      email: new FormControl<string>('', Validators.required),
+      username: new FormControl<string>('', Validators.required),
       password: new FormControl<string>('', Validators.required)
     })
   }
@@ -35,26 +35,24 @@ export class LoginPageComponent {
 
   login(): void {
     if (this.loginForm.valid) {
-      const email: string = this.loginForm.value.email as string;
+      const username: string = this.loginForm.value.username as string;
       const password: string = this.loginForm.value.password as string;
 
       const loginRequest = {
-        email,
-        password
+        username: username,
+        password: password
       }
 
       this.authService.login(loginRequest).subscribe(
         {
-          next: response => {
-            this.storage.saveToken(response.token);
-            this.storage.saveRefreshToken(response.refreshToken);
-            this.storage.saveUser(response.user);
+          next: value => {
+            this.storage.saveToken(value.token);
+            this.storage.saveRefreshToken(value.refreshToken);
+            this.storage.saveUser(value.user);
             this.router.navigate(['']);
           },
           error: error => {
-            // TODO HANDLE ERROR PROPERLY
             this.errorMessage = 'Invalid Email or Password!';
-            this.loginForm.reset();
           }
         })
     } else {

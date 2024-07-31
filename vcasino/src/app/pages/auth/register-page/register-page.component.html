@@ -12,6 +12,11 @@
     </div>
 
     <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" formControlName="username">
+    </div>
+
+    <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input type="email" class="form-control" id="email" formControlName="email" aria-describedby="emailHelp">
       <div *ngIf="registerForm.controls.email.invalid
@@ -24,8 +29,19 @@
     </div>
 
     <div class="mb-3">
+      <label for="country" class="form-label">Country</label>
+      <select id="country" class="form-select" formControlName="country">
+        <option value="" disabled selected>Select a country</option>
+        <option *ngFor="let country of countries" [value]="country.code">{{ country.name }}</option>
+      </select>
+      <div class="text-danger mt-2" *ngIf="registerForm.controls.country.errors?.['notSelected']">
+        Choose a country!
+      </div>
+    </div>
+
+    <div class="mb-3">
       <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" minlength="6" id="password" formControlName="password">
+      <input type="password" class="form-control" minlength="8" id="password" formControlName="password">
 
       <div *ngIf="registerForm.controls.password.invalid
                   && (registerForm.controls.password.dirty || registerForm.controls.password.touched)"
@@ -37,7 +53,7 @@
     </div>
 
     <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
-      <strong>{{errorMessage}}</strong>
+      <strong>{{ errorMessage }}</strong>
     </div>
 
     <div class="text-center mt-3">
