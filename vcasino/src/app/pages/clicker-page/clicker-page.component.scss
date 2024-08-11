@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 768px;
+}
+
+.clicker-header {
+  padding: 0 20px;
+}
+
+.profit-per-hour {
+  .profit-per-hour-label {
+    color: #fff6;
+    font-size: 14px;
+  }
+
+  .profit-per-hour-image {
+    margin-right: 0.5rem;
+  }
+
+  .profit-per-hour-value {
+    margin-top: .1rem;
+    font-weight: 700;
+  }
+
+  padding: 10px;
+  background: var(--gray-color);
+  border-radius: 50px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--dark-gray-color);
+  box-shadow: 0 -4px 64px var(--yellow-shadow);
+  border-top-left-radius:  50px;
+  border-top-right-radius: 50px;
+}
+
+.balance {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  .balance-value {
+    font-weight: 700;
+    font-size: 30px;
+  }
+
+  .balance-coin-image {
+    margin-right: .5rem;
+  }
+}
+
+.app-bar {
+  margin-top: auto;
+  .bar-items {
+    background-color: var(--gray-color);
+    color: var(--light-gray-color);
+    padding: 5px;
+
+    .bar-item-active {
+      color: var(--white-color);
+      background-color: var(--dark-gray-color);
+    }
+
+    .bar-item {
+      cursor: pointer;
+      text-align: center;
+      padding: .5rem;
+      border-radius: .5rem;
+      width: 100%;
+    }
+  }
+}

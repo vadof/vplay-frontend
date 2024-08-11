@@ -1,0 +1,18 @@
+@mixin val() {
+  border-radius: .5*1em - .15em;
+  box-shadow: inset 0 .05em .05em rgba(#fff, .35);
+  background: var(--fill)
+}
+
+.level-progress {
+  display: flex;
+  box-sizing: border-box;
+  background: linear-gradient(#191c23, #2d3341);
+  font: clamp(.625em, 7.5vw, 5em) monospace;
+
+  &::-webkit-progress-bar { background: transparent }
+  &::-webkit-progress-value { @include val() }
+  &::-moz-progress-bar { @include val() }
+
+  --fill: linear-gradient(#ffec9d, transparent 85%), linear-gradient(90deg, #ffe94b, #f94745);
+}

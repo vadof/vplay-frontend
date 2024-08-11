@@ -3,13 +3,21 @@
 
 :root {
   --white-color: #ffffff;
-  --dark-color: #1c1f24;
+  --dark-color: #000000;
   --gray-color: #272a2f;
+  --dark-gray-color: #1c1f24;
+  --light-gray-color: #8b8e93;
   --yellow-color: #f3ba2f;
   --yellow-shadow: #fab82299;
 }
 
 html, body {
+  height: 100%;
+}
+
+app-clicker-page {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 

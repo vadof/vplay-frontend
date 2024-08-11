@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {IUser} from "../models/IUser";
+import {IUser} from "../models/auth/IUser";
 import {Router} from "@angular/router";
 
 const TOKEN_KEY: string = 'token';
@@ -15,7 +15,8 @@ export class TokenStorageService {
   constructor(
     private cookieService: CookieService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   signOut(): void {
     this.cookieService.delete(TOKEN_KEY);

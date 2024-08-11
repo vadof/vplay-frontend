@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {TokenStorageService} from "./services/token-storage.service";
 import {EventBusService} from "./shared/event-bus.service";
-import {IUser} from "./models/IUser";
+import {IUser} from "./models/auth/IUser";
 
 @Component({
   selector: 'app-root',
@@ -14,9 +14,9 @@ import {IUser} from "./models/IUser";
 })
 export class AppComponent implements OnInit, OnDestroy {
   // private roles: string[] = [];
-  isLoggedIn = false;
   // showAdminBoard = false;
   // showModeratorBoard = false;
+  isLoggedIn = false;
   username?: string;
 
   eventBusSub?: Subscription;
@@ -32,10 +32,8 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isLoggedIn) {
       const user: IUser = this.tokenStorageService.getUser()!;
       // this.roles = user.roles;
-
       // this.showAdminBoard = this.roles.includes('ROLE_ADMIN');
       // this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
-
       this.username = user.username;
     }
 
@@ -51,7 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.tokenStorageService.signOut();
-
     this.isLoggedIn = false;
     // this.roles = [];
     // this.showAdminBoard = false;

@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {API_URL} from "../config/constants";
-import {AuthResponse} from "../models/AuthReposnse";
+import {AuthResponse} from "../models/auth/AuthReposnse";
 import { Observable } from "rxjs";
-import { ICountry } from "../models/ICountry";
+import { ICountry } from "../models/auth/ICountry";
 
 const AUTH_API = `${API_URL}/v1/users/auth`
 

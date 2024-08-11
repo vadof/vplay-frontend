@@ -1,78 +1,91 @@
-import { HTTP_INTERCEPTORS, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import {Observable, throwError} from 'rxjs';
+import {catchError, switchMap} from 'rxjs/operators';
 import {TokenStorageService} from "../../services/token-storage.service";
 import {AuthService} from "../../services/auth.service";
-
-const TOKEN_HEADER_KEY = 'Authorization';  // for Spring Boot back-end
+import {EventData} from "../../shared/event.class";
+import {EventBusService} from "../../shared/event-bus.service";
 
 @Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing: boolean = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+export class HttpRequestInterceptor implements HttpInterceptor {
+  private isRefreshing = false;
 
   constructor(
-    private tokenService: TokenStorageService,
-    private authService: AuthService
-  ) { }
+    private storageService: TokenStorageService,
+    private authService: AuthService,
+    private eventBusService: EventBusService
+  ) {
+  }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<Object>> {
-    let authReq: HttpRequest<any> = req;
-    const token = this.tokenService.getToken();
-    if (token !== null) {
-      authReq = this.addTokenHeader(req, token);
-    }
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    req = req.clone({
+      withCredentials: true,
+    });
 
-    return next.handle(authReq).pipe(catchError(error => {
-      if (error instanceof HttpErrorResponse && !authReq.url.includes('auth/login') && error.status === 401) {
-        return this.handle401Error(authReq, next);
-      }
+    return next.handle(req).pipe(
+      catchError((error) => {
+        if (error instanceof HttpErrorResponse) {
+          return this.handle401Error(req, next);
+        }
 
-      return throwError(error);
-    }));
+        return throwError(() => error);
+      })
+    );
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
 
-      const token = this.tokenService.getRefreshToken();
+      const token: string | null = this.storageService.getRefreshToken();
 
-      if (token)
+      if (token) {
         return this.authService.refreshToken(token).pipe(
-          switchMap((token: any) => {
+          switchMap((response) => {
             this.isRefreshing = false;
+            console.log(response)
 
-            this.tokenService.saveToken(token.accessToken);
-            this.refreshTokenSubject.next(token.accessToken);
+            if (response && response.token) {
+              this.storageService.saveToken(response.token);
+              this.storageService.saveRefreshToken(response.refreshToken);
+            }
 
-            return next.handle(this.addTokenHeader(request, token.accessToken));
+            return next.handle(
+              request.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${response.token}`
+                }
+              })
+            );
           }),
-          catchError((err) => {
+          catchError((error) => {
             this.isRefreshing = false;
 
-            this.tokenService.signOut();
-            return throwError(err);
+            if (error.status == '403') {
+              this.eventBusService.emit(new EventData('logout', null));
+            }
+
+            return throwError(() => error);
           })
         );
+      } else {
+        this.eventBusService.emit(new EventData('logout', null));
+      }
     }
 
-    return this.refreshTokenSubject.pipe(
-      filter(token => token !== null),
-      take(1),
-      switchMap((token) => next.handle(this.addTokenHeader(request, token)))
-    );
-  }
-
-  private addTokenHeader(request: HttpRequest<any>, token: string) {
-    return request.clone({ headers: request.headers.set(TOKEN_HEADER_KEY, 'Bearer ' + token) });
+    return next.handle(request);
   }
 }
 
-export const authInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+export const httpInterceptorProviders = [
+  {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
 ];

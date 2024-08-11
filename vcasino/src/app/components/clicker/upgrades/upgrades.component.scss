@@ -1,0 +1,138 @@
+.upgrades {
+  padding: .5rem;
+}
+
+.section-bar {
+  .section-bar-items {
+    background-color: var(--gray-color);
+    color: var(--light-gray-color);
+    padding: 5px;
+
+    .section-bar-item {
+      cursor: pointer;
+      text-align: center;
+      padding: .5rem;
+      border-radius: .5rem;
+      width: 100%;
+      font-weight: 700;
+    }
+
+    .section-bar-item-active {
+      color: var(--white-color);
+      background-color: var(--dark-gray-color);
+    }
+  }
+}
+
+.upgrade-items {
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  .upgrade-item {
+    cursor: pointer;
+    font-size: 12px;
+    width: 49%;
+    border-radius: 15px;
+    background: var(--gray-color);
+    margin-bottom: 1rem;
+
+    .upgrade-item-top {
+      //position: relative;
+      padding: 8px;
+      .upgrade-item-image {
+        position: relative;
+        margin-right: 10px;
+        img {
+          border-radius: 12px;
+        }
+      }
+
+      .upgrade-item-locked-icon {
+        fill: var(--white-color);
+        height: 24px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 24px;
+        z-index: 3;
+
+        svg {
+          height: 24px;
+          width: 24px;
+          fill: var(--white-color);
+        }
+      }
+
+
+
+      .upgrade-item-profit {
+        .upgrade-item-profit-title {
+          font-size: 10px;
+          color: var(--light-gray-color);
+        }
+
+        .upgrade-item-profit-value {
+          font-weight: 700;
+          img {
+            margin-right: 6px;
+          }
+        }
+      }
+    }
+
+    .upgrade-item-bottom {
+      padding: 8px 12px;
+      border-top: 1px solid #34383f;
+      font-weight: 700;
+
+      .upgrade-item-level {
+        //font-weight: 700;
+        min-width: 40px;
+        padding-right: 6px;
+      }
+
+      .upgrade-item-level-divider {
+        background-color: #34383f;
+        margin-right: 12px;
+        width: 1px;
+      }
+
+      .upgrade-item-price {
+        img {
+          margin-right: 6px;
+        }
+      }
+    }
+  }
+
+  .unavailable {
+    background: #272a2f80;
+    cursor: default;
+
+    .upgrade-item-image {
+      position: relative;
+
+      &::before {
+        background-color: #34383fcc;
+        border-radius: 12px;
+        content: "";
+        display: block;
+        height: 68px;
+        left: -4px;
+        overflow: hidden;
+        position: absolute;
+        top: -4px;
+        width: 68px;
+        z-index: 2;
+      }
+    }
+  }
+
+}
+
+.gray-filter {
+  filter: grayscale(1);
+}

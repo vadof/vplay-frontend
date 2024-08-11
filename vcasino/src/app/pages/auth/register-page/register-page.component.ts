@@ -4,8 +4,8 @@ import {Router, RouterLink} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {AuthService} from "../../../services/auth.service";
 import {TokenStorageService} from "../../../services/token-storage.service";
-import {ErrorResponse} from "../../../models/ErrorResponse";
-import {ICountry} from "../../../models/ICountry";
+import {ErrorResponse} from "../../../models/auth/ErrorResponse";
+import {ICountry} from "../../../models/auth/ICountry";
 
 @Component({
   selector: 'app-register-page',

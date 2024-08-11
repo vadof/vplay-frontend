@@ -1,0 +1,56 @@
+.level-overview {
+  position: relative;
+  padding: 1.5rem;
+  margin-top: 5rem;
+}
+.level-info {
+  .level-bg {
+    position: absolute;
+    content: '';
+    z-index: 1;
+    border-radius: 20px;
+    width: 200px;
+    height: 200px;
+  }
+
+  .level-name {
+    text-shadow: 1px 1px var(--dark-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-size: 32px;
+    font-weight: 800;
+    width: 200px;
+    height: 200px;
+  }
+
+  .level-value {
+    margin-top: .5rem;
+    color: #fff9;
+    font-weight: 700;
+  }
+}
+
+.swap-btn {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  border-top: 2px solid #8b8e93;
+  border-right: 2px solid #8b8e93;
+}
+
+.swap-left {
+  rotate: 225deg;
+}
+
+.swap-right {
+  rotate: 45deg;
+}
+
+.swap-disable {
+  opacity: 50%;
+  cursor: none;
+  pointer-events: none;
+}

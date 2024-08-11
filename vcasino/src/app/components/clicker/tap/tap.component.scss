@@ -1,0 +1,52 @@
+.tap-area {
+  position: relative;
+  padding: 1.5rem;
+  cursor: pointer;
+
+  .img-bg {
+    background-image: url("/vadoff.jpg");
+    background-size: 300px 300px;
+    border-radius: 50%;
+    height: 300px;
+    width: 300px;
+  }
+}
+
+.tap-animation {
+  position: absolute;
+  text-shadow: 0 0 4px rgba(234, 182, 64, 0.25);
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(180deg, #e8c547 0%, #ef882b 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
+  user-select: none;
+  animation: move-up 1s forwards;
+}
+
+@keyframes move-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-150px);
+  }
+}
+
+.energy {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  font-weight: 700;
+
+  .energy-icon {
+    margin-right: .5rem;
+  }
+
+  .energy-divider {
+    margin: 0 .1rem 0 .1rem;
+  }
+}
