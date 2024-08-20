@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UpgradeService} from "../../../services/clicker/upgrade.service";
 import {ISectionUpgrades} from "../../../models/clicker/ISectionUpgrades";
 import {IUpgrade} from "../../../models/clicker/IUpgrade";
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
+import {IAccount} from "../../../models/clicker/IAccount";
+import {HttpService} from "../../../services/http.service";
 
 @Component({
   selector: 'app-upgrades',
@@ -17,27 +18,50 @@ import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 })
 export class UpgradesComponent implements OnInit {
   section: string = '';
-  @Input({required: true}) userUpgrades: IUpgrade[] = [];
+  @Input({required: true}) account!: IAccount;
 
   private sectionUpgrades: ISectionUpgrades[] = [];
   sections: string[] = [];
   upgrades: IUpgrade[] = [];
 
-  constructor(private upgradeService: UpgradeService) {
+  openedUpgrade: IUpgrade | null = null;
+
+  constructor(
+    private http: HttpService
+  ) {}
+
+  ngOnInit() {
+    this.sectionUpgrades = this.account.sectionUpgrades;
+    this.sectionUpgrades.forEach(su => {
+      su.upgrades.forEach(u => u.imageSrc = this.getUpgradeImage(u));
+    });
+    this.sectionUpgrades.forEach(su => this.sections.push(su.section));
+    this.changeSection(this.sections[0]);
+  }
+
+  openModal(upgrade: IUpgrade): void {
+    if (!upgrade.available) return;
+    this.openedUpgrade = upgrade;
+  }
+
+  buyUpgrade(upgrade: IUpgrade) {
 
   }
 
-  ngOnInit() {
-    this.upgradeService.getUpgrades(this.userUpgrades).then(res => {
-      this.sectionUpgrades = res;
-      console.log(this.sectionUpgrades);
-      this.sectionUpgrades.forEach(su => this.sections.push(su.section));
-      this.changeSection(this.sections[0]);
-    })
+  closeModal() {
+    this.openedUpgrade = null;
   }
 
   changeSection(value: string) {
     this.section = value;
     this.upgrades = this.sectionUpgrades.find(su => su.section === value)!.upgrades;
+  }
+
+  getConditionText(upgrade: IUpgrade): string {
+    return `${upgrade.condition?.upgradeName} lvl ${upgrade.condition?.level}`
+  }
+
+  getUpgradeImage(upgrade: IUpgrade) {
+    return `upgrades/${upgrade.section}/${upgrade.name.replaceAll(' ', '')}.webp`;
   }
 }

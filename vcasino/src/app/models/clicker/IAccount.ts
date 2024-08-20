@@ -1,4 +1,4 @@
-import {IUpgrade} from "./IUpgrade";
+import {ISectionUpgrades} from "./ISectionUpgrades";
 
 export interface IAccount {
   level: number;
@@ -10,5 +10,5 @@ export interface IAccount {
   tapsRecoverPerSec: number;
   passiveEarnPerHour: number;
   passiveEarnPerSec: number;
-  upgrades: IUpgrade[];
+  sectionUpgrades: ISectionUpgrades[];
 }

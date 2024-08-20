@@ -60,7 +60,7 @@
       </ng-template>
 
       <ng-template [ngIf]="panel === 'upgrades' && account">
-        <app-upgrades [userUpgrades]="account.upgrades"></app-upgrades>
+        <app-upgrades [account]="account"></app-upgrades>
       </ng-template>
     </div>
 

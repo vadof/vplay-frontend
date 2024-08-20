@@ -10,4 +10,5 @@ export interface IUpgrade {
   condition: ICondition | null;
   maxLevel: boolean;
   available: boolean;
+  imageSrc: string;
 }
