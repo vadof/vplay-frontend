@@ -49,7 +49,6 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.http.get('/v1/clicker/accounts')
       .then(res => {
         this.setAccount(res as IAccount);
-        // this.setAccount(this.mockAccount());
       })
       .catch(err => {
         console.log(err)
@@ -94,7 +93,11 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateProfitPerHour(account: IAccount) {
     const value: number = account.passiveEarnPerHour;
-    this.profitPerHour = `+${(value / 1000).toFixed(2)}K`;
+    if (value < 1000000) {
+      this.profitPerHour = `+${(value / 1000).toFixed(2)}K`;
+    } else {
+      this.profitPerHour = `+${(value / 1000000).toFixed(2)}M`
+    }
   }
 
   private updateBalance(account: IAccount) {

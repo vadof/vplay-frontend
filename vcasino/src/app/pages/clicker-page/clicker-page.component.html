@@ -60,7 +60,7 @@
       </ng-template>
 
       <ng-template [ngIf]="panel === 'upgrades' && account">
-        <app-upgrades [account]="account"></app-upgrades>
+        <app-upgrades [account]="account" (accountUpdate)="setAccount($event)"></app-upgrades>
       </ng-template>
     </div>
 

@@ -56,3 +56,8 @@ body {
     color: var(--yellow-shadow);
   }
 }
+
+.btn-disabled {
+  pointer-events: none;
+  background-color: var(--yellow-shadow);
+}
