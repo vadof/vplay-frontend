@@ -52,7 +52,7 @@ export class LoginPageComponent {
             this.router.navigate(['']);
           },
           error: error => {
-            this.errorMessage = 'Invalid Email or Password!';
+            this.errorMessage = 'Invalid Username or Password!';
           }
         })
     } else {
