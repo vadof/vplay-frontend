@@ -8,16 +8,18 @@ import {
 } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
-import {Observable, throwError} from 'rxjs';
-import {catchError, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, Observable, take, throwError} from 'rxjs';
+import {catchError, filter, switchMap} from 'rxjs/operators';
 import {TokenStorageService} from "../../services/token-storage.service";
 import {AuthService} from "../../services/auth.service";
 import {EventData} from "../../shared/event.class";
 import {EventBusService} from "../../shared/event-bus.service";
+import {AuthResponse} from "../../models/auth/AuthReposnse";
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
   private isRefreshing = false;
+  private refreshTokenStatus: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(
     private storageService: TokenStorageService,
@@ -27,14 +29,26 @@ export class HttpRequestInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    req = req.clone({
-      withCredentials: true,
-    });
+    if (req.url.includes('/auth/')) {
+      return next.handle(req);
+    }
 
     return next.handle(req).pipe(
       catchError((error) => {
         if (error instanceof HttpErrorResponse) {
-          return this.handle401Error(req, next);
+
+          if (error.status === 401) {
+
+            const token: string | null = this.storageService.getRefreshToken();
+            if (token) {
+              return this.handle401Error(req, next, token);
+            } else {
+              this.eventBusService.emit(new EventData('logout', null));
+            }
+
+          } else if (error.status === 403) {
+            this.eventBusService.emit(new EventData('logout', null));
+          }
         }
 
         return throwError(() => error);
@@ -42,47 +56,42 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     );
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler, token: string) {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
+      this.refreshTokenStatus.next(null);
 
-      const token: string | null = this.storageService.getRefreshToken();
+      return this.authService.refreshToken(token).pipe(
+        switchMap((res: AuthResponse) => {
+          this.isRefreshing = false;
+          this.storageService.saveToken(res.token);
+          this.refreshTokenStatus.next(res.token);
+          return next.handle(this.cloneRequestWithNewToken(request, res.token));
+        }),
+        catchError((error) => {
+          this.isRefreshing = false;
+          this.eventBusService.emit(new EventData('logout', null));
+          return throwError(() => error);
+        })
+      );
 
-      if (token) {
-        return this.authService.refreshToken(token).pipe(
-          switchMap((response) => {
-            this.isRefreshing = false;
-            console.log(response)
-
-            if (response && response.token) {
-              this.storageService.saveToken(response.token);
-              this.storageService.saveRefreshToken(response.refreshToken);
-            }
-
-            return next.handle(
-              request.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${response.token}`
-                }
-              })
-            );
-          }),
-          catchError((error) => {
-            this.isRefreshing = false;
-
-            if (error.status == '403') {
-              this.eventBusService.emit(new EventData('logout', null));
-            }
-
-            return throwError(() => error);
-          })
-        );
-      } else {
-        this.eventBusService.emit(new EventData('logout', null));
-      }
+    } else {
+      return this.refreshTokenStatus.pipe(
+        filter(token => token),
+        take(1),
+        switchMap((token) => {
+          return next.handle(this.cloneRequestWithNewToken(request, token));
+        })
+      );
     }
+  }
 
-    return next.handle(request);
+  private cloneRequestWithNewToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    })
   }
 }
 

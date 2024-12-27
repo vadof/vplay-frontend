@@ -4,26 +4,53 @@
     <div class="mb-3">
       <label for="firstname" class="form-label">FirstName</label>
       <input type="text" class="form-control" id="firstname" formControlName="firstname">
+      <div *ngIf="registerForm.controls['firstname']['invalid']
+                  && (registerForm.controls['firstname']['dirty'] || registerForm.controls['firstname']['touched'])"
+           class="text-danger mt-2">
+        <div *ngIf="registerForm.controls['firstname'].errors?.['required']">
+          Firstname cannot be empty
+        </div>
+      </div>
     </div>
 
     <div class="mb-3">
       <label for="lastname" class="form-label">LastName</label>
       <input type="text" class="form-control" id="lastname" formControlName="lastname">
+      <div *ngIf="registerForm.controls['lastname']['invalid']
+                  && (registerForm.controls['lastname']['dirty'] || registerForm.controls['lastname']['touched'])"
+           class="text-danger mt-2">
+        <div *ngIf="registerForm.controls['lastname'].errors?.['required']">
+          Lastname cannot be empty
+        </div>
+      </div>
     </div>
 
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>
       <input type="text" class="form-control" id="username" formControlName="username">
+      <div *ngIf="registerForm.controls['username']['invalid']
+                  && (registerForm.controls['username']['dirty'] || registerForm.controls['username']['touched'])"
+           class="text-danger mt-2">
+        <div *ngIf="registerForm.controls['username'].errors?.['required']">
+          Username cannot be empty
+        </div>
+        <div *ngIf="registerForm.controls['username'].errors?.['pattern']">
+          Username can only contain english letters, numbers and underscores
+        </div>
+      </div>
     </div>
 
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input type="email" class="form-control" id="email" formControlName="email" aria-describedby="emailHelp">
-      <div *ngIf="registerForm.controls.email.invalid
-                  && (registerForm.controls.email.dirty || registerForm.controls.email.touched)"
+      <div *ngIf="registerForm.controls['email']['invalid']
+                  && (registerForm.controls['email']['dirty'] || registerForm.controls['email']['touched'])"
            class="text-danger mt-2">
-        <div *ngIf="registerForm.controls.email.errors?.['pattern']">
-          Invalid email!
+        <div *ngIf="registerForm.controls['email'].errors?.['required']">
+          Email cannot be empty
+        </div>
+        <div *ngIf="registerForm.controls['email'].errors?.['pattern']">
+          Invalid email
         </div>
       </div>
     </div>
@@ -34,8 +61,8 @@
         <option value="" disabled selected>Select a country</option>
         <option *ngFor="let country of countries" [value]="country.code">{{ country.name }}</option>
       </select>
-      <div class="text-danger mt-2" *ngIf="registerForm.controls.country.errors?.['notSelected']">
-        Choose a country!
+      <div class="text-danger mt-2" *ngIf="registerForm.controls['country'].errors?.['notSelected']">
+        Choose a country
       </div>
     </div>
 
@@ -43,11 +70,14 @@
       <label for="password" class="form-label">Password</label>
       <input type="password" class="form-control" minlength="8" id="password" formControlName="password">
 
-      <div *ngIf="registerForm.controls.password.invalid
-                  && (registerForm.controls.password.dirty || registerForm.controls.password.touched)"
+      <div *ngIf="registerForm.controls['password']['invalid']
+                  && (registerForm.controls['password']['dirty'] || registerForm.controls['password']['touched'])"
            class="text-danger mt-2">
-        <div *ngIf="registerForm.controls.password.errors?.['minlength']">
-          Password min length is 8 symbols!
+        <div *ngIf="registerForm.controls['password'].errors?.['required']">
+          Password cannot be empty
+        </div>
+        <div *ngIf="registerForm.controls['password'].errors?.['minlength']">
+          Password min length is 8 symbols
         </div>
       </div>
     </div>

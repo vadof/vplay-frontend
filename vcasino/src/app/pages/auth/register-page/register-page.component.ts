@@ -23,12 +23,11 @@ export class RegisterPageComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({
     firstname: new FormControl<string>('', Validators.required),
     lastname: new FormControl<string>('', Validators.required),
-    username: new FormControl<string>('', Validators.required),
+    username: new FormControl<string>('', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]),
     country: new FormControl<string>('', Validators.required),
     email: new FormControl<string>('',
       [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
-    password: new FormControl<string>('',
-      [Validators.required, Validators.minLength(8)]),
+    password: new FormControl<string>('', [Validators.required, Validators.minLength(8)]),
   });
 
   countries: ICountry[] = [];

@@ -51,8 +51,8 @@ export class LoginPageComponent {
             this.storage.saveUser(value.user);
             this.router.navigate(['']);
           },
-          error: error => {
-            this.errorMessage = 'Invalid Email or Password!';
+          error: () => {
+            this.errorMessage = 'Invalid Username or Password!';
           }
         })
     } else {

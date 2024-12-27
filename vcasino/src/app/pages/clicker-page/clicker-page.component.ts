@@ -33,7 +33,7 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   profitPerHour: string = '+0'
   showBalance: boolean = true;
 
-  panel: string = 'upgrades';
+  panel: string = 'tap';
 
   account!: IAccount;
 
