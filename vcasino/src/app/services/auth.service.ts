@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {API_URL} from "../config/constants";
+import {environment} from "../../environments/environment";
 import {AuthResponse} from "../models/auth/AuthReposnse";
-import { Observable } from "rxjs";
-import { ICountry } from "../models/auth/ICountry";
+import {Observable} from "rxjs";
 
-const AUTH_API = `${API_URL}/v1/users/auth`
+const AUTH_API = `${environment.API_URL}/v1/users/auth`
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -21,10 +20,6 @@ export class AuthService {
   constructor(
     private http: HttpClient
   ) {}
-
-  public getCountries(): Observable<ICountry[]> {
-    return this.http.get<ICountry[]>(`${AUTH_API}/countries`, httpOptions);
-  }
 
   public login(request: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${AUTH_API}/login`, request, httpOptions);

@@ -1,28 +1,19 @@
-<div class="container d-flex align-items-center justify-content-center">
+<div class="container d-flex align-items-center justify-content-center flex-column">
   <form [formGroup]="registerForm" (ngSubmit)="register()" class="w-50 text-color-primary">
 
     <div class="mb-3">
-      <label for="firstname" class="form-label">FirstName</label>
-      <input type="text" class="form-control" id="firstname" formControlName="firstname">
-      <div *ngIf="registerForm.controls['firstname']['invalid']
-                  && (registerForm.controls['firstname']['dirty'] || registerForm.controls['firstname']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['firstname'].errors?.['required']">
-          Firstname cannot be empty
-        </div>
-      </div>
+      <label for="firstName" class="form-label">First Name</label>
+      <input type="text" class="form-control" id="firstName" formControlName="firstName">
     </div>
 
     <div class="mb-3">
-      <label for="lastname" class="form-label">LastName</label>
-      <input type="text" class="form-control" id="lastname" formControlName="lastname">
-      <div *ngIf="registerForm.controls['lastname']['invalid']
-                  && (registerForm.controls['lastname']['dirty'] || registerForm.controls['lastname']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['lastname'].errors?.['required']">
-          Lastname cannot be empty
-        </div>
-      </div>
+      <label for="middleName" class="form-label">Middle Name</label>
+      <input type="text" class="form-control" id="middleName" formControlName="middleName">
+    </div>
+
+    <div class="mb-3">
+      <label for="lastName" class="form-label">Last Name</label>
+      <input type="text" class="form-control" id="lastName" formControlName="lastName">
     </div>
 
     <div class="mb-3">
@@ -56,17 +47,6 @@
     </div>
 
     <div class="mb-3">
-      <label for="country" class="form-label">Country</label>
-      <select id="country" class="form-select" formControlName="country">
-        <option value="" disabled selected>Select a country</option>
-        <option *ngFor="let country of countries" [value]="country.code">{{ country.name }}</option>
-      </select>
-      <div class="text-danger mt-2" *ngIf="registerForm.controls['country'].errors?.['notSelected']">
-        Choose a country
-      </div>
-    </div>
-
-    <div class="mb-3">
       <label for="password" class="form-label">Password</label>
       <input type="password" class="form-control" minlength="8" id="password" formControlName="password">
 
@@ -95,4 +75,7 @@
     <button type="submit" class="btn btn-primary w-100 mt-3 mb-3">SIGN UP</button>
 
   </form>
+
+  <app-oauth2></app-oauth2>
+
 </div>
