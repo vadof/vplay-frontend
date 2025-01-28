@@ -1,86 +1,133 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router, RouterLink} from "@angular/router";
-import {CommonModule} from "@angular/common";
 import {AuthService} from "../../../services/auth.service";
-import {TokenStorageService} from "../../../services/token-storage.service";
+import {CookieStorage} from "../../../services/cookie-storage.service";
 import {ErrorResponse} from "../../../models/auth/ErrorResponse";
-import {ICountry} from "../../../models/auth/ICountry";
+import {Oauth2Component} from "../../../components/oauth2/oauth2.component";
+import {NgIf, NgOptimizedImage} from "@angular/common";
+import {HeaderComponent} from "../../../components/header/header.component";
+import {IEmailSendingOptions} from "../../../models/auth/IEmailSendingOptions";
+import {finalize} from "rxjs";
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
   imports: [
+    NgIf,
     RouterLink,
-    CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    Oauth2Component,
+    HeaderComponent,
+    NgOptimizedImage
   ],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss'
 })
-export class RegisterPageComponent implements OnInit {
+export class RegisterPageComponent implements OnInit, OnDestroy {
 
+  // TODO display required fields as *
   registerForm: FormGroup = new FormGroup({
-    firstname: new FormControl<string>('', Validators.required),
-    lastname: new FormControl<string>('', Validators.required),
+    name: new FormControl<string>(''),
     username: new FormControl<string>('', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]),
-    country: new FormControl<string>('', Validators.required),
     email: new FormControl<string>('',
       [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
     password: new FormControl<string>('', [Validators.required, Validators.minLength(8)]),
   });
 
-  countries: ICountry[] = [];
+  emailOptions: IEmailSendingOptions | null = null;
+  tokenCheckIntervalId: ReturnType<typeof setInterval> | null = null;
+  errorMessage: string = '';
+  emailIntervalId: ReturnType<typeof setInterval> | null = null;
+  resendIn: number = 0;
 
   constructor(
     private authService: AuthService,
-    private storage: TokenStorageService,
-    private router: Router
+    private storage: CookieStorage,
+    private router: Router,
   ) {
   }
 
   ngOnInit(): void {
-    this.authService.getCountries().subscribe({
-      next: value => this.countries = value,
-      error: err => {
-        const error: ErrorResponse = err.error as ErrorResponse;
-        this.errorMessage = error.message;
-      }
-    });
+    this.storage.signOut(false);
   }
 
-  errorMessage: string = '';
+  ngOnDestroy(): void {
+    this.clearIntervals();
+  }
+
+  private clearIntervals(): void {
+    if (this.tokenCheckIntervalId) clearInterval(this.tokenCheckIntervalId);
+    if (this.emailIntervalId) clearInterval(this.emailIntervalId);
+  }
 
   register(): void {
     if (this.registerForm.valid) {
-      const selectedCountry: string = this.registerForm.value.country as string;
       const registerRequest = {
-        firstname: this.registerForm.value.firstname as string,
-        lastname: this.registerForm.value.lastname as string,
+        name: this.registerForm.value.name as string,
         username: this.registerForm.value.username as string,
         email: this.registerForm.value.email as string,
-        country: this.countries.find(c => c.code === selectedCountry),
         password: this.registerForm.value.password as string
       }
 
       this.authService.register(registerRequest).subscribe(
         {
-          next: value => {
-            this.storage.saveToken(value.token);
-            this.storage.saveUser(value.user);
-            this.router.navigate(['']);
+          next: res => {
+            this.emailOptions = res;
+            this.errorMessage = '';
+            this.setEmailInterval();
+            this.waitForToken();
           },
           error: error => {
-            let errorResponse: ErrorResponse = error.error as ErrorResponse;
-            this.errorMessage = errorResponse.message;
+            this.errorMessage = (error.error as ErrorResponse).message;
           }
         })
     } else {
-      if (this.registerForm.controls.country.errors?.['required']) {
-        this.registerForm.controls.country.errors.notSelected = true;
-      }
-
       this.errorMessage = 'Fill in the empty fields!';
     }
+  }
+
+  private waitForToken() {
+    this.tokenCheckIntervalId = setInterval(() => {
+      if (this.storage.getToken()) {
+        this.router.navigate(['']);
+      }
+    }, 5000);
+  }
+
+  sendEmailAgain() {
+    this.authService.resendEmail(this.emailOptions).subscribe({
+      next: res => {
+        this.emailOptions = res;
+        console.log(this.emailOptions);
+        this.setEmailInterval();
+      },
+      error: err => {
+        this.errorMessage = (err.error as ErrorResponse).message;
+      }
+    })
+  }
+
+  private setEmailInterval() {
+    if (this.emailOptions && this.emailOptions.canResend) {
+      this.resendIn = this.emailOptions.emailsSent * 30;
+      this.emailIntervalId = setInterval(() => {
+        if (this.resendIn === 0) {
+          clearInterval(this.emailIntervalId!);
+        } else {
+          this.resendIn--;
+        }
+      }, 1000);
+    }
+  }
+
+  goBack() {
+    this.authService.deletePendingUser(this.emailOptions).pipe(
+      finalize(() => {
+        this.emailOptions = null;
+        this.errorMessage = '';
+        this.clearIntervals();
+      })
+    ).subscribe();
   }
 }

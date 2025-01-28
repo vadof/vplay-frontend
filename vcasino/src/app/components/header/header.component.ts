@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import {Router, RouterLink} from "@angular/router";
-import {TokenStorageService} from "../../services/token-storage.service";
+import {Component, Input, OnInit} from '@angular/core';
+import {RouterLink} from "@angular/router";
+import {CookieStorage} from "../../services/cookie-storage.service";
 import {IUser} from "../../models/auth/IUser";
 import {NgIf} from "@angular/common";
 
@@ -14,22 +14,23 @@ import {NgIf} from "@angular/common";
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   username: string | null = null;
+  @Input({required: false}) hideRegisterBtn: boolean = false;
+  @Input({required: false}) hideLoginBtn: boolean = false;
+  @Input({required: false}) displayUser: boolean = true;
 
   constructor(
-    private tokenStorage: TokenStorageService,
-    private router: Router
+    private cookieStorage: CookieStorage
   ) {
   }
 
   logout() {
-    this.tokenStorage.signOut();
-    this.router.navigate(['/login']);
+    this.cookieStorage.signOut();
   }
 
   ngOnInit(): void {
-    const user: IUser | null = this.tokenStorage.getUser();
+    const user: IUser | null = this.cookieStorage.getUser();
     if (user) {
       this.username = user.username;
     }

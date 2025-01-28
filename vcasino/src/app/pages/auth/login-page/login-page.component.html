@@ -1,4 +1,6 @@
-<div class="container d-flex align-items-center justify-content-center">
+<app-header [hideLoginBtn]="true" [displayUser]="false"></app-header>
+
+<div class="container d-flex align-items-center justify-content-center flex-column">
   <form [formGroup]="loginForm" (ngSubmit)="login()" class="w-50 text-color-primary">
 
     <div class="mb-3">
@@ -19,13 +21,16 @@
       <a class="link" href="/">Forgot password?</a>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-shadow w-100">SIGN IN</button>
+    <button type="submit" class="btn btn-primary w-100">SIGN IN</button>
 
-    <div class="text-center mt-3">
+    <div class="text-center mt-3 mb-1">
       <div>Not a member?
         <a class="link" routerLink="/register">Register</a>
       </div>
     </div>
 
   </form>
+
+  <app-oauth2 class="w-50"></app-oauth2>
+
 </div>

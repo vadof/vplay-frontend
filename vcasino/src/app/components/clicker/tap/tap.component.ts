@@ -1,18 +1,19 @@
 import {
   Component,
   ElementRef,
-  EventEmitter, Inject,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output, PLATFORM_ID,
+  Output,
   Renderer2,
   ViewChild
 } from '@angular/core';
 import {IAccount} from "../../../models/clicker/IAccount";
-import {isPlatformBrowser} from "@angular/common";
 import {HttpService} from "../../../services/http.service";
 import {ITap} from "../../../models/clicker/ITap";
+import {getMessageFromError} from "../../../utils/global-utils";
+import {ErrorService} from "../../../services/error.service";
 
 @Component({
   selector: 'app-tap',
@@ -32,8 +33,9 @@ export class TapComponent implements OnInit, OnDestroy {
   constructor(
     private renderer: Renderer2,
     private http: HttpService,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+    private errorService: ErrorService
+  ) {
+  }
 
   availableEnergy: number = 0;
   maxEnergy = 0;
@@ -48,19 +50,16 @@ export class TapComponent implements OnInit, OnDestroy {
     this.tapsRecoverPerSec = this.account.tapsRecoverPerSec;
     this.earnPerTap = this.account.earnPerTap;
 
-    if (isPlatformBrowser(this.platformId)) {
+    this.energyIntervalId = setInterval(() => {
+      this.availableEnergy = Math.min(this.availableEnergy + this.tapsRecoverPerSec, this.maxEnergy);
+    }, 1000);
 
-      this.energyIntervalId = setInterval(() => {
-        this.availableEnergy = Math.min(this.availableEnergy + this.tapsRecoverPerSec, this.maxEnergy);
-      }, 1000);
-
-      this.lastTapIntervalId = setInterval(() => {
-        this.handleTapInterval();
-      }, 1000);
-
-    }
+    this.lastTapIntervalId = setInterval(() => {
+      this.handleTapInterval();
+    }, 1000);
   }
 
+  // TODO if value is 500 and fast switch between sections value again 1000
   ngOnDestroy() {
     if (this.energyIntervalId) {
       clearInterval(this.energyIntervalId);
@@ -107,10 +106,7 @@ export class TapComponent implements OnInit, OnDestroy {
       this.http.post('/v1/clicker/tap', tapBody)
         .then(res => {
           this.updateAccount(res as IAccount);
-        })
-        .catch(err => {
-          console.log(err)
-        });
+        }, err => this.errorService.showError(getMessageFromError(err)));
     }
   }
 

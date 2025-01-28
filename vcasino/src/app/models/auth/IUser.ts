@@ -1,9 +1,5 @@
-import {ICountry} from "./ICountry";
-
 export interface IUser {
-  firstname: string;
-  lastname: string;
+  name: string;
   username: string;
   email: string;
-  country: ICountry;
 }

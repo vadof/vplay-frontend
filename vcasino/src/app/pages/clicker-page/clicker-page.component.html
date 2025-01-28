@@ -1,4 +1,10 @@
 <app-header></app-header>
+<app-error-popup
+  *ngIf="errorMessage"
+  [errorMessage]="errorMessage"
+  (closeEvent)="clearError()">
+</app-error-popup>
+
 <div class="container">
 
   <!--  Header-->

@@ -1,12 +1,12 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import {TokenStorageService} from "../../services/token-storage.service";
+import {inject} from '@angular/core';
+import {CanActivateFn, Router} from '@angular/router';
+import {CookieStorage} from "../../services/cookie-storage.service";
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const tokenStorageService: TokenStorageService = inject(TokenStorageService);
+  const cookieStorage: CookieStorage = inject(CookieStorage);
   const router: Router = inject(Router);
 
-  if (tokenStorageService.getToken() === null) {
+  if (!cookieStorage.getRefreshToken()) {
     router.navigate(['login']);
     return false;
   }

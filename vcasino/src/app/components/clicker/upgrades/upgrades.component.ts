@@ -4,6 +4,8 @@ import {IUpgrade} from "../../../models/clicker/IUpgrade";
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {IAccount} from "../../../models/clicker/IAccount";
 import {HttpService} from "../../../services/http.service";
+import {ErrorService} from "../../../services/error.service";
+import {getMessageFromError} from "../../../utils/global-utils";
 
 @Component({
   selector: 'app-upgrades',
@@ -28,7 +30,8 @@ export class UpgradesComponent implements OnInit {
   openedUpgrade: IUpgrade | null = null;
 
   constructor(
-    private http: HttpService
+    private http: HttpService,
+    private errorService: ErrorService
   ) {}
 
   ngOnInit() {
@@ -63,9 +66,7 @@ export class UpgradesComponent implements OnInit {
         this.setImagesSrc();
         this.changeSection(this.section);
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch(err => this.errorService.showError(getMessageFromError(err)))
   }
 
   closeModal() {

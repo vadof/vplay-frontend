@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ILevel} from "../../../models/clicker/ILevel";
 import {ProgressComponent} from "../../progress/progress.component";
-import {calculateLevelProgress, getLevelColor} from "../../../utils/utils";
+import {calculateLevelProgress, getLevelColor} from "../../../utils/clicker-utils";
 import {NgClass, NgIf, NgStyle} from "@angular/common";
 
 @Component({

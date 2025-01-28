@@ -10,7 +10,7 @@ import {Injectable} from '@angular/core';
 
 import {BehaviorSubject, Observable, take, throwError} from 'rxjs';
 import {catchError, filter, switchMap} from 'rxjs/operators';
-import {TokenStorageService} from "../../services/token-storage.service";
+import {CookieStorage} from "../../services/cookie-storage.service";
 import {AuthService} from "../../services/auth.service";
 import {EventData} from "../../shared/event.class";
 import {EventBusService} from "../../shared/event-bus.service";
@@ -22,7 +22,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
   private refreshTokenStatus: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(
-    private storageService: TokenStorageService,
+    private storageService: CookieStorage,
     private authService: AuthService,
     private eventBusService: EventBusService
   ) {
@@ -36,7 +36,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error) => {
         if (error instanceof HttpErrorResponse) {
-
           if (error.status === 401) {
 
             const token: string | null = this.storageService.getRefreshToken();
@@ -68,9 +67,11 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           this.refreshTokenStatus.next(res.token);
           return next.handle(this.cloneRequestWithNewToken(request, res.token));
         }),
-        catchError((error) => {
+        catchError(error => {
           this.isRefreshing = false;
-          this.eventBusService.emit(new EventData('logout', null));
+          if (error.status === 403) {
+            this.eventBusService.emit(new EventData('logout', null));
+          }
           return throwError(() => error);
         })
       );
