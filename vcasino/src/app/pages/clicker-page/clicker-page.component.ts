@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, Inject, OnDestroy, OnInit, PLATFORM_ID} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {HeaderComponent} from "../../components/header/header.component";
-import {isPlatformBrowser, NgIf, NgOptimizedImage} from "@angular/common";
+import {NgIf, NgOptimizedImage} from "@angular/common";
 import {ProgressComponent} from "../../components/progress/progress.component";
 import {HttpService} from "../../services/http.service";
 import {IAccount} from "../../models/clicker/IAccount";
@@ -9,6 +9,9 @@ import {UpgradesComponent} from "../../components/clicker/upgrades/upgrades.comp
 import {LevelInfoComponent} from "../../components/clicker/level-info/level-info.component";
 import {LevelOverviewComponent} from "../../components/clicker/level-overview/level-overview.component";
 import {ILevel} from "../../models/clicker/ILevel";
+import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
+import {ErrorService} from "../../services/error.service";
+import {getMessageFromError} from "../../utils/global-utils";
 
 @Component({
   selector: 'app-clicker-page',
@@ -21,12 +24,15 @@ import {ILevel} from "../../models/clicker/ILevel";
     TapComponent,
     UpgradesComponent,
     LevelInfoComponent,
-    LevelOverviewComponent
+    LevelOverviewComponent,
+    ErrorPopupComponent
   ],
   templateUrl: './clicker-page.component.html',
   styleUrl: './clicker-page.component.scss'
 })
 export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  errorMessage: string = '';
 
   levels: ILevel[] = [];
   balance: string = '0';
@@ -41,33 +47,31 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private http: HttpService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    private errorService: ErrorService
   ) {
+    this.errorService.error$.subscribe((message) => {
+      this.errorMessage = message;
+    });
   }
 
   ngOnInit() {
-    this.http.get('/v1/clicker/accounts')
-      .then(res => {
-        this.setAccount(res as IAccount);
-      })
-      .catch(err => {
-        console.log(err)
-      });
+    this.http.get('/v1/clicker/accounts').then(
+      res => this.setAccount(res as IAccount),
+      err => this.errorService.showError(getMessageFromError(err))
+    );
     this.http.get('/v1/clicker/accounts/levels').then(
-      res => {
-        this.levels = res as ILevel[];
-      }).catch(
+      res => this.levels = res as ILevel[],
       err => {
-        console.log(err);
-      })
+        console.log(err)
+        this.errorService.showError(getMessageFromError(err))
+      }
+    );
   }
 
   ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.passiveEarnInterval = setInterval(() => {
-        this.handlePassiveEarnInterval();
-      }, 1000);
-    }
+    this.passiveEarnInterval = setInterval(() => {
+      this.handlePassiveEarnInterval();
+    }, 1000);
   }
 
   ngOnDestroy() {
@@ -112,5 +116,9 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.account.balanceCoins += value;
     this.account.netWorth += value;
     this.updateBalance(this.account);
+  }
+
+  clearError() {
+    this.errorMessage = '';
   }
 }
