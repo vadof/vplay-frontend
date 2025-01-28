@@ -1,0 +1,27 @@
+<div class="container d-flex align-items-center justify-content-center flex-column">
+  <form [formGroup]="usernameForm" (ngSubmit)="proceedUsernameConfirmation()" class="w-50 text-color-primary">
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" formControlName="username">
+      <div *ngIf="usernameForm.controls['username']['invalid']
+                  && (usernameForm.controls['username']['dirty'] || usernameForm.controls['username']['touched'])"
+           class="text-danger mt-2">
+        <div *ngIf="usernameForm.controls['username'].errors?.['required']">
+          Username cannot be empty
+        </div>
+        <div *ngIf="usernameForm.controls['username'].errors?.['pattern']">
+          Username can only contain english letters, numbers and underscores
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+      <strong>{{ errorMessage }}</strong>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mt-3 mb-3">Proceed</button>
+
+  </form>
+
+</div>

@@ -3,7 +3,10 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {CommonModule} from "@angular/common"
 import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
-import {TokenStorageService} from "../../../services/token-storage.service";
+import {CookieStorage} from "../../../services/cookie-storage.service";
+import {Oauth2Component} from "../../../components/oauth2/oauth2.component";
+import {HeaderComponent} from "../../../components/header/header.component";
+import {ErrorResponse} from "../../../models/auth/ErrorResponse";
 
 @Component({
   selector: 'app-login-page',
@@ -11,27 +14,27 @@ import {TokenStorageService} from "../../../services/token-storage.service";
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    Oauth2Component,
+    HeaderComponent
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })
 export class LoginPageComponent {
 
-  loginForm: FormGroup;
+  errorMessage: string = ''
+
+  loginForm: FormGroup = new FormGroup({
+    username: new FormControl<string>('', Validators.required),
+    password: new FormControl<string>('', Validators.required)
+  });
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private storage: TokenStorageService
-  ) {
-    this.loginForm = new FormGroup({
-      username: new FormControl<string>('', Validators.required),
-      password: new FormControl<string>('', Validators.required)
-    })
-  }
-
-  public errorMessage: string = ''
+    private storage: CookieStorage
+  ) {}
 
   login(): void {
     if (this.loginForm.valid) {
@@ -45,14 +48,16 @@ export class LoginPageComponent {
 
       this.authService.login(loginRequest).subscribe(
         {
-          next: value => {
-            this.storage.saveToken(value.token);
-            this.storage.saveRefreshToken(value.refreshToken);
-            this.storage.saveUser(value.user);
+          next: res => {
+            this.storage.saveAuthResponse(res);
             this.router.navigate(['']);
           },
-          error: () => {
-            this.errorMessage = 'Invalid Username or Password!';
+          error: err => {
+            if (err.error) {
+              this.errorMessage = (err.error as ErrorResponse).message;
+            } else {
+              this.errorMessage = 'Invalid Username or Password!';
+            }
           }
         })
     } else {

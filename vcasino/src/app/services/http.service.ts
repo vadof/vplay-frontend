@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {TokenStorageService} from "./token-storage.service";
+import {CookieStorage} from "./cookie-storage.service";
 import {firstValueFrom} from "rxjs";
 
 @Injectable({
@@ -10,7 +10,7 @@ import {firstValueFrom} from "rxjs";
 export class HttpService {
   constructor(
     private http: HttpClient,
-    private storage: TokenStorageService
+    private storage: CookieStorage
   ) {
   }
 
@@ -35,11 +35,17 @@ export class HttpService {
   }
 
   private getHeaders() {
+    const token = this.storage.getToken();
+    const headersConfig: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headersConfig['Authorization'] = `Bearer ${token}`;
+    }
+
     return {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.storage.getToken()}`
-      })
+      headers: new HttpHeaders(headersConfig),
     };
   }
 }

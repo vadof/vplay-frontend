@@ -8,7 +8,7 @@
       </a>
       <ul class="navbar-nav flex-row d-md-flex services">
         <li class="service nav-item">
-          <a class="nav-link" routerLink="clicker">Clicker</a>
+          <a class="nav-link" routerLink="/clicker">Clicker</a>
         </li>
       </ul>
     </div>
@@ -18,24 +18,37 @@
     <!-- Center elements -->
 
     <!-- Right elements -->
-    <div class="flex-row dropdown-center" *ngIf="username">
-      <div class="nav-item">
-        <a class="nav-link d-sm-flex align-items-center profile dropdown-toggle" data-bs-toggle="dropdown">
-          <div class="justify-content-between d-flex">
-            <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
-              <path
-                d="M406.5 399.6C387.4 352.9 341.5 320 288 320H224c-53.5 0-99.4 32.9-118.5 79.6C69.9 362.2 48 311.7 48 256C48 141.1 141.1 48 256 48s208 93.1 208 208c0 55.7-21.9 106.2-57.5 143.6zm-40.1 32.7C334.4 452.4 296.6 464 256 464s-78.4-11.6-110.5-31.7c7.3-36.7 39.7-64.3 78.5-64.3h64c38.8 0 71.2 27.6 78.5 64.3zM256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-272a40 40 0 1 1 0-80 40 40 0 1 1 0 80zm-88-40a88 88 0 1 0 176 0 88 88 0 1 0 -176 0z"/>
-            </svg>
-            <div class="d-sm-block ms-1 text-color-primary username">{{ username }}</div>
-          </div>
+    <ng-container *ngIf="username && displayUser; else btnTemplate">
+      <div class="flex-row dropdown-center">
+        <div class="nav-item">
+          <a class="nav-link d-sm-flex align-items-center profile dropdown-toggle" data-bs-toggle="dropdown">
+            <div class="justify-content-between d-flex">
+              <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
+                <path
+                  d="M406.5 399.6C387.4 352.9 341.5 320 288 320H224c-53.5 0-99.4 32.9-118.5 79.6C69.9 362.2 48 311.7 48 256C48 141.1 141.1 48 256 48s208 93.1 208 208c0 55.7-21.9 106.2-57.5 143.6zm-40.1 32.7C334.4 452.4 296.6 464 256 464s-78.4-11.6-110.5-31.7c7.3-36.7 39.7-64.3 78.5-64.3h64c38.8 0 71.2 27.6 78.5 64.3zM256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-272a40 40 0 1 1 0-80 40 40 0 1 1 0 80zm-88-40a88 88 0 1 0 176 0 88 88 0 1 0 -176 0z"/>
+              </svg>
+              <div class="d-sm-block ms-1 text-color-primary username">{{ username }}</div>
+            </div>
 
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item">Profile</a></li>
-            <li><a class="dropdown-item logout" (click)="logout()">Logout</a></li>
-          </ul>
-        </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item">Profile</a></li>
+              <li><a class="dropdown-item logout" (click)="logout()">Logout</a></li>
+            </ul>
+          </a>
+        </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-template #btnTemplate>
+      <div class="d-flex nav-item">
+          <a *ngIf="!hideRegisterBtn" class="nav-link d-sm-flex align-items-center login-btn" data-bs-toggle="dropdown">
+            <button class="btn btn-gray" routerLink="/register">Join now</button>
+          </a>
+          <a *ngIf="!hideLoginBtn" class="nav-link d-sm-flex align-items-center login-btn" data-bs-toggle="dropdown">
+            <button class="btn btn-gray" routerLink="/login">Login</button>
+          </a>
+      </div>
+    </ng-template>
     <!-- Right elements -->
 
   </div>

@@ -1,28 +1,43 @@
-import {Component, Inject, PLATFORM_ID} from '@angular/core';
-import {isPlatformBrowser} from "@angular/common";
+import {Component, OnInit} from '@angular/core';
+import {NgIf} from "@angular/common";
 import {environment} from "../../../environments/environment";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-oauth2',
   standalone: true,
-  imports: [],
+  imports: [
+    NgIf
+  ],
   templateUrl: './oauth2.component.html',
   styleUrl: './oauth2.component.scss'
 })
-export class Oauth2Component {
+export class Oauth2Component implements OnInit {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  errorMessage = '';
+
+  constructor(private route: ActivatedRoute) {
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.errorMessage = params['oauthError'];
+    });
   }
 
   public loginWithGoogle() {
-    if (isPlatformBrowser(this.platformId)) {
-      window.location.href = environment.GOOGLE_OAUTH2_REDIRECT_URL;
-    }
+    window.location.href = environment.GOOGLE_OAUTH2_REDIRECT_URL;
   }
 
   public loginWithGithub() {
-    if (isPlatformBrowser(this.platformId)) {
-      window.location.href = environment.GITHUB_OAUTH2_REDIRECT_URL;
-    }
+    window.location.href = environment.GITHUB_OAUTH2_REDIRECT_URL;
+  }
+
+  public loginWithFacebook() {
+    window.location.href = environment.FACEBOOK_OAUTH2_REDIRECT_URL;
+  }
+
+  public loginWithDiscord() {
+    window.location.href = environment.DISCORD_OAUTH2_REDIRECT_URL;
   }
 }

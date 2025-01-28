@@ -1,0 +1,51 @@
+.social-icons {
+  display: flex;
+  justify-content: center;
+
+  :not(:first-child) {
+    margin-left: 8px;
+  }
+
+  .icon {
+    cursor: pointer;
+    padding: 0.75rem;
+    background-color: var(--yellow-color);
+    border: none;
+    border-radius: 50%;
+    transition: .4s ease;
+
+    &:hover {
+      background-color: var(--gray-color);
+      box-shadow: 0 0 35px var(--yellow-shadow);
+      svg {
+        fill: var(--yellow-color);
+      }
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--dark-color);
+    }
+  }
+}
+
+.social-message {
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  margin: 0 auto;
+
+  .line {
+    height: 1px;
+    flex: 1 1 0;
+    background-color: var(--yellow-color);
+  }
+
+  .message {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
