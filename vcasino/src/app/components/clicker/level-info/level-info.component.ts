@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ProgressComponent} from "../../progress/progress.component";
 import {ILevel} from "../../../models/clicker/ILevel";
 import {NgIf} from "@angular/common";
-import {calculateLevelProgress} from "../../../utils/utils";
+import {calculateLevelProgress} from "../../../utils/clicker-utils";
 
 @Component({
   selector: 'app-level-info',
