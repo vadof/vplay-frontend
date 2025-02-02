@@ -1,15 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {RouterLink} from "@angular/router";
+import {Component, HostListener, Input, OnInit, Renderer2} from '@angular/core';
+import {RouterLink, RouterLinkActive} from "@angular/router";
 import {CookieStorage} from "../../services/cookie-storage.service";
 import {IUser} from "../../models/auth/IUser";
-import {NgIf} from "@angular/common";
+import {NgClass, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     NgIf,
-    RouterLink
+    RouterLink,
+    RouterLinkActive,
+    NgClass
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -19,9 +21,11 @@ export class HeaderComponent implements OnInit {
   @Input({required: false}) hideRegisterBtn: boolean = false;
   @Input({required: false}) hideLoginBtn: boolean = false;
   @Input({required: false}) displayUser: boolean = true;
+  sidebarOpen: boolean = false;
 
   constructor(
-    private cookieStorage: CookieStorage
+    private cookieStorage: CookieStorage,
+    private renderer: Renderer2
   ) {
   }
 
@@ -34,5 +38,37 @@ export class HeaderComponent implements OnInit {
     if (user) {
       this.username = user.username;
     }
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+    if (this.sidebarOpen) {
+      this.renderer.addClass(document.body, 'no-scroll');
+    } else {
+      this.renderer.removeClass(document.body, 'no-scroll');
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeMenuOnClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    const isInsideMenu = target.closest('.sidebar') || target.closest('.burger-menu');
+
+    if (!isInsideMenu) {
+      this.closeSidebar();
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 768 && this.sidebarOpen) {
+      this.closeSidebar();
+    }
+  }
+
+  closeSidebar() {
+    this.sidebarOpen = false;
+    this.renderer.removeClass(document.body, 'no-scroll');
   }
 }

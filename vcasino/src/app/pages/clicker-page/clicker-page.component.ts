@@ -61,10 +61,7 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.http.get('/v1/clicker/accounts/levels').then(
       res => this.levels = res as ILevel[],
-      err => {
-        console.log(err)
-        this.errorService.showError(getMessageFromError(err))
-      }
+      err => this.errorService.showError(getMessageFromError(err))
     );
   }
 

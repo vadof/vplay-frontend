@@ -75,3 +75,8 @@ body {
   pointer-events: none;
   background-color: var(--yellow-shadow);
 }
+
+.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}

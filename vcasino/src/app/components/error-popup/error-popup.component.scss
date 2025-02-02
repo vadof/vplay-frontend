@@ -1,11 +1,7 @@
 .popup {
-  display: flex;
   position: fixed;
-  left: 0;
-  top: 7px;
-  padding: 0 10px;
-  width: 100%;
-  justify-content: center;
+  left: calc(50%);
+  transform: translateX(-50%);
   animation: slideDown 0.5s ease-out forwards;
 
   .popup-content {
