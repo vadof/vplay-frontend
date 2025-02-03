@@ -64,6 +64,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         switchMap((res: AuthResponse) => {
           this.isRefreshing = false;
           this.storageService.saveToken(res.token);
+          this.storageService.saveRefreshToken(res.refreshToken);
           this.refreshTokenStatus.next(res.token);
           return next.handle(this.cloneRequestWithNewToken(request, res.token));
         }),
