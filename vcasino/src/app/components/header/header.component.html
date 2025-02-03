@@ -41,8 +41,8 @@
 
     <ng-template #btnTemplate>
       <div class="right-elements login-buttons d-flex">
-        <a *ngIf="!hideRegisterBtn" class="btn login-btn">Join now</a>
-        <a *ngIf="!hideLoginBtn" class="btn login-btn">Login</a>
+        <a *ngIf="!hideRegisterBtn" class="btn login-btn" routerLink="/register">Join now</a>
+        <a *ngIf="!hideLoginBtn" class="btn login-btn" routerLink="/login">Login</a>
       </div>
     </ng-template>
     <!-- Right elements -->
