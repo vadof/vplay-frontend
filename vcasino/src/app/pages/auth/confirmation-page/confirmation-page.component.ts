@@ -32,7 +32,12 @@ export class ConfirmationPageComponent implements OnInit {
   errorMessage: string = '';
 
   usernameForm: FormGroup = new FormGroup({
-    username: new FormControl<string>('', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]),
+    username: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(16),
+      Validators.pattern('^[a-zA-Z0-9_]*$')
+    ]),
   });
 
   ngOnInit(): void {

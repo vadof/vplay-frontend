@@ -28,6 +28,10 @@ body {
   font-family: "Roboto Flex", sans-serif;
 }
 
+.text-yellow {
+  color: var(--yellow-color);
+}
+
 .btn-primary {
   background-color: var(--yellow-color);
   color: var(--dark-color);

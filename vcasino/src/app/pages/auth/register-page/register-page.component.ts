@@ -26,13 +26,24 @@ import {finalize} from "rxjs";
 })
 export class RegisterPageComponent implements OnInit, OnDestroy {
 
-  // TODO display required fields as *
   registerForm: FormGroup = new FormGroup({
-    name: new FormControl<string>(''),
-    username: new FormControl<string>('', [Validators.required, Validators.pattern('^[a-zA-Z0-9_]*$')]),
-    email: new FormControl<string>('',
-      [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
-    password: new FormControl<string>('', [Validators.required, Validators.minLength(8)]),
+    name: new FormControl<string>('', [
+      Validators.maxLength(100)
+    ]),
+    username: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(16),
+      Validators.pattern('^[a-zA-Z0-9_]*$')
+    ]),
+    email: new FormControl<string>('', [
+      Validators.required,
+      Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
+    ]),
+    password: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(8)
+    ]),
   });
 
   emailOptions: IEmailSendingOptions | null = null;
