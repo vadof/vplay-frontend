@@ -11,7 +11,6 @@ import {LevelOverviewComponent} from "../../components/clicker/level-overview/le
 import {ILevel} from "../../models/clicker/ILevel";
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {ErrorService} from "../../services/error.service";
-import {getMessageFromError} from "../../utils/global-utils";
 
 @Component({
   selector: 'app-clicker-page',
@@ -57,11 +56,11 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.http.get('/v1/clicker/accounts').then(
       res => this.setAccount(res as IAccount),
-      err => this.errorService.showError(getMessageFromError(err))
+      err => this.errorService.handleError(err)
     );
     this.http.get('/v1/clicker/accounts/levels').then(
       res => this.levels = res as ILevel[],
-      err => this.errorService.showError(getMessageFromError(err))
+      err => this.errorService.handleError(err)
     );
   }
 

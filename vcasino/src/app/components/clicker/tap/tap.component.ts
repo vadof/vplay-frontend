@@ -12,7 +12,6 @@ import {
 import {IAccount} from "../../../models/clicker/IAccount";
 import {HttpService} from "../../../services/http.service";
 import {ITap} from "../../../models/clicker/ITap";
-import {getMessageFromError} from "../../../utils/global-utils";
 import {ErrorService} from "../../../services/error.service";
 
 @Component({
@@ -104,9 +103,12 @@ export class TapComponent implements OnInit, OnDestroy {
       this.taps = 0;
 
       this.http.post('/v1/clicker/tap', tapBody)
-        .then(res => {
-          this.updateAccount(res as IAccount);
-        }, err => this.errorService.showError(getMessageFromError(err)));
+        .then(res => this.updateAccount(res as IAccount),
+          err => {
+            this.errorService.handleError(err);
+            this.availableEnergy = Math.min(this.maxEnergy, tapBody.amount * this.earnPerTap + this.availableEnergy);
+            this.balanceAdd.emit(tapBody.amount * -this.earnPerTap);
+          });
     }
   }
 
