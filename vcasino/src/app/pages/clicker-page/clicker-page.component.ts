@@ -11,6 +11,10 @@ import {LevelOverviewComponent} from "../../components/clicker/level-overview/le
 import {ILevel} from "../../models/clicker/ILevel";
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {ErrorService} from "../../services/error.service";
+import {TasksComponent} from "../../components/clicker/tasks/tasks.component";
+import {IStreaksInfo} from "../../models/clicker/tasks/IStreaksInfo";
+import {ITask} from "../../models/clicker/tasks/ITask";
+import {numberFormatter} from "../../utils/clicker-utils";
 
 @Component({
   selector: 'app-clicker-page',
@@ -24,7 +28,8 @@ import {ErrorService} from "../../services/error.service";
     UpgradesComponent,
     LevelInfoComponent,
     LevelOverviewComponent,
-    ErrorPopupComponent
+    ErrorPopupComponent,
+    TasksComponent
   ],
   templateUrl: './clicker-page.component.html',
   styleUrl: './clicker-page.component.scss'
@@ -33,14 +38,17 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   errorMessage: string = '';
 
+  panel: 'tasks' | 'upgrades' | 'tap' | 'level' = 'tap';
+  account!: IAccount;
+
   levels: ILevel[] = [];
   balance: string = '0';
   profitPerHour: string = '+0'
   showBalance: boolean = true;
 
-  panel: string = 'tap';
-
-  account!: IAccount;
+  tasks: ITask[] = [];
+  streaksInfo: IStreaksInfo | null = null;
+  tasksRequestDate: Date | null = null;
 
   passiveEarnInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -86,18 +94,31 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateAccountValues(account);
   }
 
-  changePanel(value: string) {
+  switchPanel(value: 'tasks' | 'upgrades' | 'tap' | 'level') {
     this.panel = value;
     this.showBalance = this.panel !== 'level';
+
+    if (value === 'tasks' && (!this.tasksRequestDate || !this.isSameDay(this.tasksRequestDate))) {
+      Promise.all([
+        this.http.get('/v1/clicker/tasks/streaks').then(res => this.streaksInfo = res as IStreaksInfo),
+        this.http.get('/v1/clicker/tasks').then(res => this.tasks = res as ITask[])
+      ]).then(() => {
+        this.tasksRequestDate = new Date();
+      }).catch((error) => {
+        this.errorService.handleError(error);
+      });
+    }
+  }
+
+  private isSameDay(initialDate: Date) {
+    const now: Date = new Date();
+    return initialDate.getFullYear() === now.getUTCFullYear() &&
+      initialDate.getMonth() === now.getUTCMonth() &&
+      initialDate.getDate() === now.getUTCDate();
   }
 
   private updateProfitPerHour(account: IAccount) {
-    const value: number = account.passiveEarnPerHour;
-    if (value < 1000000) {
-      this.profitPerHour = `+${(value / 1000).toFixed(2)}K`;
-    } else {
-      this.profitPerHour = `+${(value / 1000000).toFixed(2)}M`
-    }
+    this.profitPerHour = numberFormatter.format(account.passiveEarnPerHour);
   }
 
   private updateBalance(account: IAccount) {

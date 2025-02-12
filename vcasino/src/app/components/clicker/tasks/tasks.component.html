@@ -1,0 +1,69 @@
+<div class="tasks">
+
+  <div class="daily-rewards">
+    <h2 class="tasks-title">Daily rewards</h2>
+
+    <div class="daily-reward-items">
+      <div *ngFor="let reward of dailyRewards"
+           class="daily-reward-item"
+           [class.received]="reward.day < streakState.day || reward.day === streakState.day && !streakState.available"
+           [class.available]="reward.day === streakState.day && streakState.available">
+        <div class="daily-reward-item-day">Day {{ reward.day }}</div>
+        <div class="daily-reward-item-icon"><img ngSrc="vcoin.webp" alt="vcoin" width="32" height="32"></div>
+        <div class="daily-reward-item-value">{{ reward.reward }}</div>
+      </div>
+    </div>
+
+    <button *ngIf="streakState.available"
+            (click)="claimDailyStreak()"
+            class="btn btn-green daily-rewards-btn mt-3">Claim
+    </button>
+  </div>
+
+  <div class="list-of-tasks">
+    <h2 class="tasks-title">List of tasks</h2>
+
+    <div class="task-items">
+      <div *ngFor="let task of tasks" (click)="startTask(task)" class="task-item">
+        <div class="task-left d-flex align-items-center">
+          <div class="task-icon">
+            <img *ngIf="task.service === 'YouTube'" ngSrc="upgrades/Social/YouTube.webp" alt="YouTube" width="52" height="52">
+            <img *ngIf="task.service === 'Telegram'" ngSrc="upgrades/Social/Telegram.webp" alt="Telegram" width="52" height="52">
+          </div>
+          <div class="task-body">
+            <div class="task-title">{{ task.name }}</div>
+            <div class="task-reward">
+              <div class="task-reward-icon"><img ngSrc="vcoin.webp" alt="Telegram" width="24" height="24"></div>
+              <div class="task-reward-value">+{{ task.rewardCoins }}</div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container [ngSwitch]="true">
+          <button *ngSwitchCase="task.canClaim"
+                  (click)="claimTaskReward(task); $event.stopPropagation()"
+                  class="task-status btn btn-green">Claim
+          </button>
+          <div *ngSwitchCase="task.received" class="task-status">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M9 10L12.2581 12.4436C12.6766 12.7574 13.2662 12.6957 13.6107 12.3021L20 5" stroke="#4eab58ff"
+                    stroke-width="2" stroke-linecap="round"/>
+              <path
+                d="M21 12C21 13.8805 20.411 15.7137 19.3156 17.2423C18.2203 18.7709 16.6736 19.9179 14.893 20.5224C13.1123 21.1268 11.187 21.1583 9.38744 20.6125C7.58792 20.0666 6.00459 18.9707 4.85982 17.4789C3.71505 15.987 3.06635 14.174 3.00482 12.2945C2.94329 10.415 3.47203 8.56344 4.51677 6.99987C5.56152 5.4363 7.06979 4.23925 8.82975 3.57685C10.5897 2.91444 12.513 2.81996 14.3294 3.30667"
+                stroke="#4eab58ff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div *ngSwitchCase="!task.canClaim && task.canClaimAt !== undefined" class="task-status">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#f3ba2f" width="32" height="32" viewBox="0 0 1024 1024">
+              <path d="M512 1024c-69.1 0-136.2-13.5-199.3-40.2C251.7 958 197 921 150 874c-47-47-84-101.7-109.8-162.7C13.5 648.2 0 581.1 0 512c0-19.9 16.1-36 36-36s36 16.1 36 36c0 59.4 11.6 117 34.6 171.3 22.2 52.4 53.9 99.5 94.3 139.9 40.4 40.4 87.5 72.2 139.9 94.3C395 940.4 452.6 952 512 952c59.4 0 117-11.6 171.3-34.6 52.4-22.2 99.5-53.9 139.9-94.3 40.4-40.4 72.2-87.5 94.3-139.9C940.4 629 952 571.4 952 512c0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 0 0-94.3-139.9 437.71 437.71 0 0 0-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.2C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3s-13.5 136.2-40.2 199.3C958 772.3 921 827 874 874c-47 47-101.8 83.9-162.7 109.7-63.1 26.8-130.2 40.3-199.3 40.3z"/>
+            </svg>
+          </div>
+          <div *ngSwitchDefault class="task-status right-arrow"></div>
+        </ng-container>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

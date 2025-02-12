@@ -1,5 +1,11 @@
 import {ILevel} from "../models/clicker/ILevel";
 
+export const numberFormatter: Intl.NumberFormat = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+  maximumFractionDigits: 2,
+});
+
 export function calculateLevelProgress(currentLevel: number, userNetWorth: number, levels: ILevel[]): number {
   let percent: number = 100;
   if (currentLevel < 10 && levels.length > 0) {

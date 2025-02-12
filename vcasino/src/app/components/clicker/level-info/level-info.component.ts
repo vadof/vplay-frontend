@@ -18,7 +18,7 @@ export class LevelInfoComponent implements OnInit {
   @Input({required: true}) levels: ILevel[] = [];
   @Input({required: true}) currentLevel: number = 0;
   @Input({required: true}) netWorth: number = 0;
-  @Output() panelChange: EventEmitter<string> = new EventEmitter<string>();
+  @Output() openLevelPanel: EventEmitter<void> = new EventEmitter<void>();
   name: string = '';
 
   ngOnInit(): void {
@@ -30,7 +30,7 @@ export class LevelInfoComponent implements OnInit {
   }
 
   openLevelOverviewPanel() {
-    this.panelChange.emit('level');
+    this.openLevelPanel.emit();
   }
 
 }

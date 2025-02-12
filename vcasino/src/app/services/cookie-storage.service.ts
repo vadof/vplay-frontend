@@ -3,10 +3,12 @@ import {CookieService} from "ngx-cookie-service";
 import {IUser} from "../models/auth/IUser";
 import {Router} from "@angular/router";
 import {AuthResponse} from "../models/auth/AuthReposnse";
+import {TaskProgress} from "../components/clicker/tasks/tasks.component";
 
 const TOKEN_KEY: string = 'accessToken';
 const REFRESH_TOKEN_KEY: string = 'refreshToken';
 const USER_KEY: string = 'user';
+const TASK_KEY: string = 'task';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +42,8 @@ export class CookieStorage {
   }
 
   public getToken(): string | null {
-    return this.cookieService.get(TOKEN_KEY);
+    const token = this.cookieService.get(TOKEN_KEY);
+    return token ? token : null;
   }
 
   public saveRefreshToken(refreshToken: string): void {
@@ -48,7 +51,8 @@ export class CookieStorage {
   }
 
   public getRefreshToken(): string | null {
-    return this.cookieService.get(REFRESH_TOKEN_KEY);
+    const token = this.cookieService.get(REFRESH_TOKEN_KEY);
+    return token ? token : null;
   }
 
   public saveUser(user: IUser): void {
@@ -59,4 +63,18 @@ export class CookieStorage {
     const user: string = this.cookieService.get(USER_KEY);
     return user ? JSON.parse(user) : null;
   }
+
+  public setTaskProgress(taskClick: TaskProgress): void {
+    this.cookieService.set(TASK_KEY, JSON.stringify(taskClick), 1, '/');
+  }
+
+  public getTaskProgress(): TaskProgress | null {
+    const taskClick = this.cookieService.get(TASK_KEY);
+    return taskClick ? JSON.parse(taskClick) : null;
+  }
+
+  public removeTaskProgress(): void {
+    this.cookieService.set(TASK_KEY, '', new Date(0), '/');
+  }
+
 }

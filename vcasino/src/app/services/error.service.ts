@@ -26,4 +26,8 @@ export class ErrorService {
       this.errorSubject.next(getMessageFromError(err));
     }
   }
+
+  showError(message: string) {
+    this.errorSubject.next(message);
+  }
 }

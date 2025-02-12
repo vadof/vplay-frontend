@@ -66,7 +66,9 @@ export class UpgradesComponent implements OnInit {
         this.setImagesSrc();
         this.changeSection(this.section);
       })
-      .catch(err => this.errorService.handleError(err));
+      .catch(err => {
+        this.errorService.handleError(err);
+      });
   }
 
   closeModal() {
