@@ -1,33 +1,41 @@
 <div *ngIf="confirmationType === 'username'" class="container d-flex align-items-center justify-content-center flex-column">
-  <form [formGroup]="usernameForm" (ngSubmit)="proceedUsernameConfirmation()" class="w-50 text-color-primary">
 
-    <div class="mb-3">
-      <label for="username" class="form-label">Username <span class="text-yellow">*</span></label>
-      <input type="text" class="form-control" id="username" formControlName="username">
-      <div *ngIf="usernameForm.controls['username']['invalid']
+  <h2 class="mb-4 text-center">
+    Almost There! <br class="d-lg-none"> Confirm Your Username
+  </h2>
+
+  <div class="col-10 col-md-8 col-lg-6">
+    <form [formGroup]="usernameForm" (ngSubmit)="proceedUsernameConfirmation()" class="text-color-primary">
+
+      <div class="mb-3">
+        <label for="username" class="form-label">Username <span class="text-yellow">*</span></label>
+        <input type="text" class="form-control" id="username" formControlName="username">
+        <div *ngIf="usernameForm.controls['username']['invalid']
                   && (usernameForm.controls['username']['dirty'] || usernameForm.controls['username']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="usernameForm.controls['username'].errors?.['required']">
-          Username cannot be empty
-        </div>
-        <div *ngIf="usernameForm.controls['username'].errors?.['minlength']">
-          Username must be at least 2 characters long
-        </div>
-        <div *ngIf="usernameForm.controls['username'].errors?.['maxlength']">
-          Username must be no more than 16 characters long
-        </div>
-        <div *ngIf="usernameForm.controls['username'].errors?.['pattern']">
-          Username can only contain english letters, numbers and underscores
+             class="text-danger mt-2">
+          <div *ngIf="usernameForm.controls['username'].errors?.['required']">
+            Username cannot be empty
+          </div>
+          <div *ngIf="usernameForm.controls['username'].errors?.['minlength']">
+            Username must be at least 2 characters long
+          </div>
+          <div *ngIf="usernameForm.controls['username'].errors?.['maxlength']">
+            Username must be no more than 16 characters long
+          </div>
+          <div *ngIf="usernameForm.controls['username'].errors?.['pattern']">
+            Username can only contain english letters, numbers and underscores
+          </div>
         </div>
       </div>
-    </div>
 
-    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
-      <strong>{{ errorMessage }}</strong>
-    </div>
+      <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+        <strong>{{ errorMessage }}</strong>
+      </div>
 
-    <button type="submit" class="btn btn-primary w-100 mt-3 mb-3">Proceed</button>
+      <button type="submit" class="btn btn-primary w-100 mt-3 mb-3">Proceed</button>
 
-  </form>
+    </form>
+  </div>
+
 
 </div>

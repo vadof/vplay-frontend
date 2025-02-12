@@ -1,36 +1,41 @@
 <app-header [hideLoginBtn]="true" [displayUser]="false"></app-header>
 
 <div class="container d-flex align-items-center justify-content-center flex-column">
-  <form [formGroup]="loginForm" (ngSubmit)="login()" class="w-50 text-color-primary">
 
-    <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" id="username" formControlName="username">
-    </div>
+  <div class="col-10 col-md-8 col-lg-6">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="text-color-primary">
 
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" formControlName="password">
-    </div>
-
-    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
-      <strong>{{errorMessage}}</strong>
-    </div>
-
-    <div class="mb-3 text-end">
-      <a class="link" href="/">Forgot password?</a>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">SIGN IN</button>
-
-    <div class="text-center mt-3 mb-1">
-      <div>Not a member?
-        <a class="link" routerLink="/register">Register</a>
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" formControlName="username">
       </div>
-    </div>
 
-  </form>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" formControlName="password">
+      </div>
 
-  <app-oauth2 class="w-50"></app-oauth2>
+      <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+        <strong>{{errorMessage}}</strong>
+      </div>
+
+      <div class="mb-3 text-end">
+        <a class="link" href="/">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">SIGN IN</button>
+
+      <div class="text-center mt-3 mb-1">
+        <div>Not a member?
+          <a class="link" routerLink="/register">Register</a>
+        </div>
+      </div>
+
+    </form>
+
+    <app-oauth2></app-oauth2>
+  </div>
+
+
 
 </div>

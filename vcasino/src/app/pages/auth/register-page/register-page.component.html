@@ -1,87 +1,90 @@
 <app-header [hideRegisterBtn]="true" [displayUser]="false"></app-header>
 
 <div *ngIf="!emailOptions" class="container d-flex align-items-center justify-content-center flex-column">
-  <form [formGroup]="registerForm" (ngSubmit)="register()" class="w-50 text-color-primary">
 
-    <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input type="text" class="form-control" id="name" formControlName="name">
-      <div *ngIf="registerForm.controls['name']['invalid']
+  <div class="col-10 col-md-8 col-lg-6 mb-3 mt-3">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="text-color-primary">
+
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" formControlName="name">
+        <div *ngIf="registerForm.controls['name']['invalid']
                   && (registerForm.controls['name']['dirty'] || registerForm.controls['name']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['name'].errors?.['maxlength']">
-          Name must be no more than 100 characters long
+             class="text-danger mt-2">
+          <div *ngIf="registerForm.controls['name'].errors?.['maxlength']">
+            Name must be no more than 100 characters long
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-3">
-      <label for="username" class="form-label">Username <span class="text-yellow">*</span></label>
-      <input type="text" class="form-control" id="username" formControlName="username">
-      <div *ngIf="registerForm.controls['username']['invalid']
+      <div class="mb-3">
+        <label for="username" class="form-label">Username <span class="text-yellow">*</span></label>
+        <input type="text" class="form-control" id="username" formControlName="username">
+        <div *ngIf="registerForm.controls['username']['invalid']
                   && (registerForm.controls['username']['dirty'] || registerForm.controls['username']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['username'].errors?.['required']">
-          Username cannot be empty
-        </div>
-        <div *ngIf="registerForm.controls['username'].errors?.['minlength']">
-          Username must be at least 2 characters long
-        </div>
-        <div *ngIf="registerForm.controls['username'].errors?.['maxlength']">
-          Username must be no more than 16 characters long
-        </div>
-        <div *ngIf="registerForm.controls['username'].errors?.['pattern']">
-          Username can only contain english letters, numbers and underscores
+             class="text-danger mt-2">
+          <div *ngIf="registerForm.controls['username'].errors?.['required']">
+            Username cannot be empty
+          </div>
+          <div *ngIf="registerForm.controls['username'].errors?.['minlength']">
+            Username must be at least 2 characters long
+          </div>
+          <div *ngIf="registerForm.controls['username'].errors?.['maxlength']">
+            Username must be no more than 16 characters long
+          </div>
+          <div *ngIf="registerForm.controls['username'].errors?.['pattern']">
+            Username can only contain english letters, numbers and underscores
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-3">
-      <label for="email" class="form-label">Email <span class="text-yellow">*</span></label>
-      <input type="email" class="form-control" id="email" formControlName="email" aria-describedby="emailHelp">
-      <div *ngIf="registerForm.controls['email']['invalid']
+      <div class="mb-3">
+        <label for="email" class="form-label">Email <span class="text-yellow">*</span></label>
+        <input type="email" class="form-control" id="email" formControlName="email" aria-describedby="emailHelp">
+        <div *ngIf="registerForm.controls['email']['invalid']
                   && (registerForm.controls['email']['dirty'] || registerForm.controls['email']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['email'].errors?.['required']">
-          Email cannot be empty
-        </div>
-        <div *ngIf="registerForm.controls['email'].errors?.['pattern']">
-          Invalid email
+             class="text-danger mt-2">
+          <div *ngIf="registerForm.controls['email'].errors?.['required']">
+            Email cannot be empty
+          </div>
+          <div *ngIf="registerForm.controls['email'].errors?.['pattern']">
+            Invalid email
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-3">
-      <label for="password" class="form-label">Password <span class="text-yellow">*</span></label>
-      <input type="password" class="form-control" minlength="8" id="password" formControlName="password">
+      <div class="mb-3">
+        <label for="password" class="form-label">Password <span class="text-yellow">*</span></label>
+        <input type="password" class="form-control" minlength="8" id="password" formControlName="password">
 
-      <div *ngIf="registerForm.controls['password']['invalid']
+        <div *ngIf="registerForm.controls['password']['invalid']
                   && (registerForm.controls['password']['dirty'] || registerForm.controls['password']['touched'])"
-           class="text-danger mt-2">
-        <div *ngIf="registerForm.controls['password'].errors?.['required']">
-          Password cannot be empty
-        </div>
-        <div *ngIf="registerForm.controls['password'].errors?.['minlength']">
-          Password min length is 8 symbols
+             class="text-danger mt-2">
+          <div *ngIf="registerForm.controls['password'].errors?.['required']">
+            Password cannot be empty
+          </div>
+          <div *ngIf="registerForm.controls['password'].errors?.['minlength']">
+            Password min length is 8 symbols
+          </div>
         </div>
       </div>
-    </div>
 
-    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
-      <strong>{{ errorMessage }}</strong>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100 mt-2">SIGN UP</button>
-
-    <div class="text-center mt-3 mb-1">
-      <div>Already have an account?
-        <a class="link" routerLink="/login">Login</a>
+      <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+        <strong>{{ errorMessage }}</strong>
       </div>
-    </div>
 
-  </form>
+      <button type="submit" class="btn btn-primary w-100 mt-2">SIGN UP</button>
 
-  <app-oauth2 class="w-50"></app-oauth2>
+      <div class="text-center mt-3 mb-1">
+        <div>Already have an account?
+          <a class="link" routerLink="/login">Login</a>
+        </div>
+      </div>
+
+    </form>
+
+    <app-oauth2></app-oauth2>
+  </div>
 
 </div>
 

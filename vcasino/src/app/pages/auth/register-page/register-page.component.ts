@@ -110,7 +110,6 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     this.authService.resendEmail(this.emailOptions).subscribe({
       next: res => {
         this.emailOptions = res;
-        console.log(this.emailOptions);
         this.setEmailInterval();
       },
       error: err => {

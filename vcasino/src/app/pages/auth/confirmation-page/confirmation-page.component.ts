@@ -7,7 +7,6 @@ import {Oauth2Component} from "../../../components/oauth2/oauth2.component";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../../services/auth.service";
 
-// TODO improve visuals on username form
 @Component({
   selector: 'app-confirmation-page',
   standalone: true,
