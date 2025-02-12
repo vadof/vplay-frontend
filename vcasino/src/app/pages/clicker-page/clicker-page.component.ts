@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HeaderComponent} from "../../components/header/header.component";
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {ProgressComponent} from "../../components/progress/progress.component";
@@ -34,7 +34,7 @@ import {numberFormatter} from "../../utils/clicker-utils";
   templateUrl: './clicker-page.component.html',
   styleUrl: './clicker-page.component.scss'
 })
-export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ClickerPageComponent implements OnInit, OnDestroy {
 
   errorMessage: string = '';
 
@@ -51,6 +51,7 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
   tasksRequestDate: Date | null = null;
 
   passiveEarnInterval: ReturnType<typeof setInterval> | null = null;
+  energyIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private http: HttpService,
@@ -63,7 +64,16 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.http.get('/v1/clicker/accounts').then(
-      res => this.setAccount(res as IAccount),
+      res => {
+        this.setAccount(res as IAccount);
+        this.passiveEarnInterval = setInterval(() => {
+          this.handlePassiveEarnInterval();
+        }, 1000);
+
+        this.energyIntervalId = setInterval(() => {
+          this.account.availableTaps = Math.min(this.account.availableTaps + this.account.tapsRecoverPerSec, this.account.maxTaps);
+        }, 1000);
+      },
       err => this.errorService.handleError(err)
     );
     this.http.get('/v1/clicker/accounts/levels').then(
@@ -72,16 +82,9 @@ export class ClickerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  ngAfterViewInit() {
-    this.passiveEarnInterval = setInterval(() => {
-      this.handlePassiveEarnInterval();
-    }, 1000);
-  }
-
   ngOnDestroy() {
-    if (this.passiveEarnInterval) {
-      clearInterval(this.passiveEarnInterval);
-    }
+    if (this.passiveEarnInterval) clearInterval(this.passiveEarnInterval);
+    if (this.energyIntervalId) clearInterval(this.energyIntervalId);
   }
 
   private updateAccountValues(account: IAccount): void {

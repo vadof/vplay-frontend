@@ -26,7 +26,7 @@ export class TapComponent implements OnInit, OnDestroy {
   @ViewChild('tapArea', {static: true, read: ElementRef}) tapArea!: ElementRef;
   @Output() balanceAdd: EventEmitter<number> = new EventEmitter<number>();
   @Output() accountUpdate: EventEmitter<IAccount> = new EventEmitter<IAccount>();
-  energyIntervalId: ReturnType<typeof setInterval> | null = null;
+
   lastTapIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(
@@ -36,49 +36,66 @@ export class TapComponent implements OnInit, OnDestroy {
   ) {
   }
 
-  availableEnergy: number = 0;
-  maxEnergy = 0;
-  tapsRecoverPerSec = 0;
-  earnPerTap = 0;
   taps: number = 0;
   lastTap: number = 0;
 
   ngOnInit() {
-    this.availableEnergy = this.account.availableTaps;
-    this.maxEnergy = this.account.maxTaps;
-    this.tapsRecoverPerSec = this.account.tapsRecoverPerSec;
-    this.earnPerTap = this.account.earnPerTap;
-
-    this.energyIntervalId = setInterval(() => {
-      this.availableEnergy = Math.min(this.availableEnergy + this.tapsRecoverPerSec, this.maxEnergy);
-    }, 1000);
-
     this.lastTapIntervalId = setInterval(() => {
       this.handleTapInterval();
     }, 1000);
   }
 
-  // TODO if value is 500 and fast switch between sections value again 1000
   ngOnDestroy() {
-    if (this.energyIntervalId) {
-      clearInterval(this.energyIntervalId);
+    if (this.lastTapIntervalId) {
+      if (this.taps) {
+        this.sendTapRequest();
+      }
+      clearInterval(this.lastTapIntervalId);
     }
   }
 
-  handleTap(event: MouseEvent) {
-    if (this.availableEnergy < this.earnPerTap) return;
+  tap(event: MouseEvent) {
+    if (this.account.availableTaps < this.account.earnPerTap) return;
     this.addElement(event);
-    this.availableEnergy -= this.earnPerTap;
-    this.updateBalance();
+    this.account.availableTaps -= this.account.earnPerTap;
+    this.balanceAdd.emit(this.account.earnPerTap);
     this.lastTap = this.getUnixTime();
     this.taps++;
+  }
+
+  private handleTapInterval() {
+    if ((this.taps && this.getUnixTime() - this.lastTap > 2) || this.taps >= 100) {
+      this.sendTapRequest();
+    }
+  }
+
+  private sendTapRequest() {
+    const tapBody: ITap = {
+      amount: this.taps,
+      availableTaps: this.account.availableTaps,
+      timestamp: this.getUnixTime()
+    };
+
+    this.taps = 0;
+
+    this.http.post('/v1/clicker/tap', tapBody).then(
+      res => this.accountUpdate.emit(res as IAccount),
+      err => {
+        this.errorService.handleError(err);
+        this.account.availableTaps = Math.min(this.account.maxTaps, tapBody.amount * this.account.earnPerTap + this.account.availableTaps);
+        this.balanceAdd.emit(tapBody.amount * -this.account.earnPerTap);
+      });
+  }
+
+  private getUnixTime() {
+    return Math.floor(Date.now() / 1000);
   }
 
   private addElement(event: MouseEvent): void {
     const rect: DOMRect = this.tapArea.nativeElement.getBoundingClientRect();
 
     const tap = this.renderer.createElement('div');
-    const text = this.renderer.createText(`+${this.earnPerTap}`);
+    const text = this.renderer.createText(`+${this.account.earnPerTap}`);
 
     this.renderer.addClass(tap, 'tap-animation');
     this.renderer.setStyle(tap, 'top', `${event.clientY - rect.top - 20}px`);
@@ -90,37 +107,5 @@ export class TapComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.renderer.removeChild(this.tapArea.nativeElement, tap);
     }, 1000)
-  }
-
-  private handleTapInterval() {
-    if (this.taps && this.getUnixTime() - this.lastTap > 2) {
-      const tapBody: ITap = {
-        amount: this.taps,
-        availableTaps: this.availableEnergy,
-        timestamp: this.getUnixTime()
-      };
-
-      this.taps = 0;
-
-      this.http.post('/v1/clicker/tap', tapBody)
-        .then(res => this.updateAccount(res as IAccount),
-          err => {
-            this.errorService.handleError(err);
-            this.availableEnergy = Math.min(this.maxEnergy, tapBody.amount * this.earnPerTap + this.availableEnergy);
-            this.balanceAdd.emit(tapBody.amount * -this.earnPerTap);
-          });
-    }
-  }
-
-  private getUnixTime() {
-    return Math.floor(Date.now() / 1000);
-  }
-
-  updateBalance() {
-    this.balanceAdd.emit(this.earnPerTap);
-  }
-
-  updateAccount(account: IAccount) {
-    this.accountUpdate.emit(account);
   }
 }
