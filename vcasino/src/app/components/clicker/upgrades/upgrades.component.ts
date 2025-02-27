@@ -5,6 +5,7 @@ import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {IAccount} from "../../../models/clicker/IAccount";
 import {HttpService} from "../../../services/http.service";
 import {ErrorService} from "../../../services/error.service";
+import {IAccountResponse} from "../../../models/clicker/IAccountResponse";
 
 @Component({
   selector: 'app-upgrades',
@@ -20,9 +21,9 @@ import {ErrorService} from "../../../services/error.service";
 export class UpgradesComponent implements OnInit {
   section: string = '';
   @Input({required: true}) account!: IAccount;
-  @Output() accountUpdate: EventEmitter<IAccount> = new EventEmitter<IAccount>();
+  @Input({required: true}) sectionUpgrades: ISectionUpgrades[] = [];
+  @Output() accountResponse: EventEmitter<IAccountResponse> = new EventEmitter<IAccountResponse>();
 
-  private sectionUpgrades: ISectionUpgrades[] = [];
   sections: string[] = [];
   upgrades: IUpgrade[] = [];
 
@@ -35,7 +36,6 @@ export class UpgradesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sectionUpgrades = this.account.sectionUpgrades;
     this.setImagesSrc();
     this.sectionUpgrades.forEach(su => this.sections.push(su.section));
     this.changeSection(this.sections[0]);
@@ -59,10 +59,11 @@ export class UpgradesComponent implements OnInit {
     }
     this.http.post('/v1/clicker/upgrades', body)
       .then(res => {
-        this.account = res as IAccount;
-        this.accountUpdate.emit(this.account);
+        const response: IAccountResponse = res as IAccountResponse;
+        this.account = response.account;
+        this.accountResponse.emit(response);
         this.closeModal();
-        this.sectionUpgrades = this.account.sectionUpgrades;
+        this.sectionUpgrades = response.sectionUpgrades;
         this.setImagesSrc();
         this.changeSection(this.section);
       })

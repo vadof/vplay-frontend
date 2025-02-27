@@ -15,6 +15,8 @@ import {TasksComponent} from "../../components/clicker/tasks/tasks.component";
 import {IStreaksInfo} from "../../models/clicker/tasks/IStreaksInfo";
 import {ITask} from "../../models/clicker/tasks/ITask";
 import {numberFormatter} from "../../utils/clicker-utils";
+import {IAccountResponse} from "../../models/clicker/IAccountResponse";
+import {ISectionUpgrades} from "../../models/clicker/ISectionUpgrades";
 
 @Component({
   selector: 'app-clicker-page',
@@ -40,6 +42,7 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
 
   panel: 'tasks' | 'upgrades' | 'tap' | 'level' = 'tap';
   account!: IAccount;
+  sectionUpgrades: ISectionUpgrades[] = [];
 
   levels: ILevel[] = [];
   balance: string = '0';
@@ -65,7 +68,7 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.http.get('/v1/clicker/accounts').then(
       res => {
-        this.setAccount(res as IAccount);
+        this.setAccountResponse(res as IAccountResponse);
         this.passiveEarnInterval = setInterval(() => {
           this.handlePassiveEarnInterval();
         }, 1000);
@@ -97,11 +100,17 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
     this.updateAccountValues(account);
   }
 
+  setAccountResponse(accountResponse: IAccountResponse) {
+    this.setAccount(accountResponse.account);
+    this.sectionUpgrades = accountResponse.sectionUpgrades;
+  }
+
   switchPanel(value: 'tasks' | 'upgrades' | 'tap' | 'level') {
     this.panel = value;
     this.showBalance = this.panel !== 'level';
 
     if (value === 'tasks' && (!this.tasksRequestDate || !this.isSameDay(this.tasksRequestDate))) {
+      console.log("NEW TASKS REQUEST")
       Promise.all([
         this.http.get('/v1/clicker/tasks/streaks').then(res => this.streaksInfo = res as IStreaksInfo),
         this.http.get('/v1/clicker/tasks').then(res => this.tasks = res as ITask[])

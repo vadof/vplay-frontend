@@ -120,11 +120,11 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   private formatRewardValues(): void {
-    if (this.dailyRewards && typeof this.dailyRewards[0].reward === 'number') {
+    if (this.dailyRewards.length > 0 && typeof this.dailyRewards[0].reward === 'number') {
       this.dailyRewards.forEach(dr => dr.reward = numberFormatter.format(+dr.reward))
     }
 
-    if (this.tasks && typeof this.tasks[0].rewardCoins === 'number') {
+    if (this.tasks.length > 0 && typeof this.tasks[0].rewardCoins === 'number') {
       this.tasks.forEach(t => t.rewardCoins = numberFormatter.format(+t.rewardCoins));
     }
   }
