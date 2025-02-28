@@ -1,0 +1,44 @@
+.popup {
+  position: fixed;
+  left: calc(50%);
+  transform: translateX(-50%);
+  animation: slideDown 0.5s ease-out forwards;
+
+  .popup-content {
+    display: flex;
+    align-items: center;
+    background-color: #f44336;
+    color: var(--white-color);
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+
+    .close-btn {
+      cursor: pointer;
+      margin-left: 5px;
+      svg path {
+        fill: var(--dark-color)
+      }
+
+      &:hover {
+        svg path {
+          fill: var(--gray-color)
+        }
+      }
+    }
+  }
+
+}
+
+@keyframes slideDown {
+  from {
+    top: -30px;
+    opacity: 0;
+  }
+
+  to {
+    top: 7px;
+    opacity: 1;
+  }
+}
