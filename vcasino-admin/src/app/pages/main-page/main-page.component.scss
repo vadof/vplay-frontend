@@ -1,0 +1,52 @@
+.user-information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .user-search {
+
+    .check-username {
+      margin-right: 1rem;
+    }
+
+    width: 100%;
+    max-width: 500px;
+
+    .search-input {
+      display: flex;
+      input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+
+  .information-items {
+    width: 100%;
+    max-width: 500px;
+
+    .information-items-history {
+      display: flex;
+      flex-wrap: wrap;
+
+      div {
+        margin-right: .5rem;
+        margin-bottom: .5rem;
+      }
+    }
+
+    .information-item {
+      display: flex;
+      padding: 5px;
+      justify-content: space-between;
+
+      &:hover {
+        background: var(--gray-color);
+      }
+    }
+  }
+}

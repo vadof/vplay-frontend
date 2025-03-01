@@ -12,10 +12,10 @@
         </label>
       </div>
 
-      <a class="logo" routerLink="/">VCasino Admin Panel</a>
+      <a class="logo" routerLink="/">Admin Panel</a>
 
       <div class="services">
-<!--        <a class="service" routerLink="/casino" routerLinkActive="service-selected">Casino</a>-->
+        <a class="service" routerLink="/clicker" routerLinkActive="service-selected">Clicker</a>
 <!--        <a class="service" routerLink="/esport" routerLinkActive="service-selected">E-Sport</a>-->
 <!--        <a class="service" routerLink="/clicker" routerLinkActive="service-selected">Clicker</a>-->
       </div>
@@ -45,9 +45,9 @@
   <!-- Sidebar -->
   <div class="sidebar" *ngIf="sidebarOpen">
     <div class="sidebar-services">
+      <a class="sidebar-service" (click)="closeSidebar()" routerLink="/clicker" routerLinkActive="service-selected">Clicker</a>
 <!--      <a class="sidebar-service" (click)="closeSidebar()" routerLink="/casino" routerLinkActive="service-selected">Casino</a>-->
 <!--      <a class="sidebar-service" (click)="closeSidebar()" routerLink="/esport" routerLinkActive="service-selected">E-Sport</a>-->
-<!--      <a class="sidebar-service" (click)="closeSidebar()" routerLink="/clicker" routerLinkActive="service-selected">Clicker</a>-->
     </div>
   </div>
   <div class="overlay" *ngIf="sidebarOpen"></div>
