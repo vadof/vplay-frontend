@@ -57,8 +57,7 @@ export class UpgradesComponent implements OnInit {
       upgradeName: upgrade.name,
       upgradeLevel: upgrade.level
     }
-    this.http.post('/v1/clicker/upgrades', body)
-      .then(res => {
+    this.http.post('/v1/clicker/upgrades', body).then(res => {
         const response: IAccountResponse = res as IAccountResponse;
         this.account = response.account;
         this.accountResponse.emit(response);
@@ -67,9 +66,8 @@ export class UpgradesComponent implements OnInit {
         this.setImagesSrc();
         this.changeSection(this.section);
       })
-      .catch(err => {
-        this.errorService.handleError(err);
-      });
+      .catch(err => this.errorService.handleError(err)
+      );
   }
 
   closeModal() {

@@ -110,7 +110,6 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
     this.showBalance = this.panel !== 'level';
 
     if (value === 'tasks' && (!this.tasksRequestDate || !this.isSameDay(this.tasksRequestDate))) {
-      console.log("NEW TASKS REQUEST")
       Promise.all([
         this.http.get('/v1/clicker/tasks/streaks').then(res => this.streaksInfo = res as IStreaksInfo),
         this.http.get('/v1/clicker/tasks').then(res => this.tasks = res as ITask[])

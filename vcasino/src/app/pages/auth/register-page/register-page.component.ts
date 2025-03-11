@@ -112,10 +112,8 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
         this.emailOptions = res;
         this.setEmailInterval();
       },
-      error: err => {
-        this.errorMessage = (err.error as ErrorResponse).message;
-      }
-    })
+      error: err => this.errorMessage = (err.error as ErrorResponse).message
+    });
   }
 
   private setEmailInterval() {

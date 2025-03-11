@@ -114,9 +114,8 @@ export class TasksComponent implements OnInit, OnDestroy {
         this.completedTasks = this.completedTasks.filter(ct => ct.id !== task.id);
         this.cookieStorage.setTaskProgress({taskInProgress: this.taskInProgress, completedTasks: this.completedTasks})
       },
-      err => {
-        this.errorService.handleError(err)
-      });
+      err => this.errorService.handleError(err)
+    );
   }
 
   private formatRewardValues(): void {
