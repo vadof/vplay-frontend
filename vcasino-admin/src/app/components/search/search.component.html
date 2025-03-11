@@ -1,0 +1,16 @@
+<div class="search">
+
+  <div class="search-options d-flex">
+    <div class="form-check" *ngFor="let option of options">
+      <input class="form-check-input" type="radio" [name]="option.label" [value]="option.label" [(ngModel)]="selectedOption">
+      <label class="form-check-label">
+        {{ option.label }}
+      </label>
+    </div>
+  </div>
+
+  <div class="search-input">
+    <input class="form-control mt-2" type="text" [(ngModel)]="searchQuery" [placeholder]="'Enter ' + selectedOption">
+    <button class="btn btn-primary mt-2" (click)="search()">Search</button>
+  </div>
+</div>

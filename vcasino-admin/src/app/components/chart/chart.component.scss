@@ -1,0 +1,44 @@
+.chart-options {
+  display: flex;
+  margin-bottom: .5em;
+
+  .option-item {
+    &:not(:last-child) {
+      margin-right: 1em;
+    }
+
+    input[type="radio"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+    }
+
+    input[type="radio"]:checked {
+      background-color: var(--yellow-color);
+      border-color: var(--yellow-color);
+    }
+
+    input[type="radio"]:checked::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background-color: var(--dark-color);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.chart {
+  background-color: var(--gray-color);
+  border-radius: 8px;
+
+  margin-bottom: 10px;
+}

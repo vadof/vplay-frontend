@@ -22,9 +22,15 @@ export class ErrorService {
           statusCode: err.status
         },
       });
+    } else if (err.status === 500) {
+      this.errorSubject.next('Server Error');
     } else {
       this.errorSubject.next(getMessageFromError(err));
     }
+  }
+
+  handleErrorMessage(errorMessage: string) {
+    this.errorSubject.next(errorMessage);
   }
 
   showError(message: string) {

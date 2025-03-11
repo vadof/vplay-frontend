@@ -1,0 +1,26 @@
+.secondary-header {
+  display: flex;
+  margin-bottom: 1.5rem;
+
+  .secondary-header-item {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    padding: 15px;
+    min-width: 33.33%;
+    background: var(--gray-color);
+
+    transition: 0.5s ease;
+
+    &:hover {
+      background: var(--yellow-color);
+      color: var(--dark-color);
+    }
+  }
+
+  .header-item-active {
+    background: var(--yellow-color);
+    color: var(--dark-color);
+  }
+}

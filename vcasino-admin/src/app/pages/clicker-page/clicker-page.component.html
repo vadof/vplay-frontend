@@ -1,0 +1,37 @@
+<app-header></app-header>
+<app-error-popup
+  *ngIf="errorMessage"
+  [errorMessage]="errorMessage"
+  (closeEvent)="clearError()">
+</app-error-popup>
+
+<div class="container">
+
+  <div class="secondary-header">
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'general'"
+         (click)="switchSection('general')">
+      General
+    </div>
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'account'"
+         (click)="switchSection('account')">
+      Account
+    </div>
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'tasks'"
+         (click)="switchSection('tasks')">
+      Tasks
+    </div>
+  </div>
+
+  <div [hidden]="!(section === 'general')">
+    <app-general-statistics></app-general-statistics>
+  </div>
+  <div [hidden]="!(section === 'account')">
+    <app-account-information></app-account-information>
+  </div>
+  <div [hidden]="!(section === 'tasks')">
+    <app-tasks></app-tasks>
+  </div>
+</div>

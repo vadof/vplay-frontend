@@ -1,0 +1,36 @@
+<div class="chart-wrapper">
+
+  <div class="chart-options" *ngIf="chartData.options !== null">
+
+    <div *ngFor="let option of chartData.options" class="option-item form-check">
+      <input class="form-check-input" type="radio"
+             [name]="label"
+             (change)="changeOption(option)"
+             [checked]="option === chartData.selectedOption">
+      <label class="form-check-label">
+        {{ option }}
+      </label>
+    </div>
+
+  </div>
+
+  <div class="chart" *ngIf="show">
+
+    <div class="line-chart" *ngIf="type === 'line'">
+      <canvas baseChart
+              [data]="lineConfig.data"
+              [type]="'line'"
+              [options]="lineConfig.options">
+      </canvas>
+    </div>
+
+    <div class="bar-chart" *ngIf="type === 'bar'">
+      <canvas baseChart
+              [data]="barConfig.data"
+              [type]="'bar'"
+              [options]="barConfig.options">
+      </canvas>
+    </div>
+
+  </div>
+</div>

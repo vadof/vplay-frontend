@@ -1,0 +1,126 @@
+<div class="add-task">
+  <button (click)="showTaskForm = !showTaskForm" class="btn btn-primary">
+    {{ showTaskForm ? 'Close' : 'Add new Task' }}
+  </button>
+
+  <form *ngIf="showTaskForm" [formGroup]="taskForm" (ngSubmit)="addTask()" class="task-form">
+
+    <div class="choice">
+      <h5 class="choice-header">Select type</h5>
+      <div class="choice-items">
+        <div *ngFor="let item of supportedTaskServices" class="form-check">
+          <input class="form-check-input" type="radio" name="searchType"
+                 (change)="selectTaskType(item.taskType)"
+                 [checked]="selectedTaskType === item.taskType">
+          <label class="form-check-label">
+            {{ item.taskType }}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="choice" *ngIf="selectedTaskType">
+      <h5 class="choice-header">Select service</h5>
+      <div class="choice-items">
+        <div *ngFor="let service of taskServices" class="form-check">
+          <input class="form-check-input" type="radio" [name]="selectedTaskType"
+                 (change)="selectedTaskService = service"
+                 [checked]="selectedTaskService === service">
+          <label class="form-check-label">
+            {{ service }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="selectedTaskService" class="inputs">
+      <div class="mb-3 mt-3">
+        <label for="id" class="form-label">ID <span class="text-yellow">*</span></label>
+        <input type="text" class="form-control" id="id" formControlName="id" placeholder="ID">
+        <div *ngIf="taskForm.controls['id']['invalid']
+                      && (taskForm.controls['id']['dirty'] || taskForm.controls['id']['touched'])"
+             class="text-danger mt-2">
+          <div *ngIf="taskForm.controls['id'].errors?.['required']">
+            ID cannot be empty
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="taskName" class="form-label">Task Name <span class="text-yellow">*</span></label>
+        <input type="text" class="form-control" id="taskName" formControlName="taskName" placeholder="Task Name">
+        <div *ngIf="taskForm.controls['taskName']['invalid']
+                  && (taskForm.controls['taskName']['dirty'] || taskForm.controls['taskName']['touched'])"
+             class="text-danger mt-2">
+          <div *ngIf="taskForm.controls['taskName'].errors?.['required']">
+            Task Name cannot be empty
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="rewardCoins" class="form-label">Reward Coins <span class="text-yellow">*</span></label>
+        <input type="number" class="form-control" id="rewardCoins" formControlName="rewardCoins" placeholder="Amount">
+        <div *ngIf="taskForm.controls['rewardCoins']['invalid']
+                  && (taskForm.controls['rewardCoins']['dirty'] || taskForm.controls['rewardCoins']['touched'])"
+             class="text-danger mt-2">
+          <div *ngIf="taskForm.controls['rewardCoins'].errors?.['required']">
+            Reward Coins cannot be empty
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="validFrom" class="form-label">Valid From <span class="text-yellow">*</span></label>
+        <input type="date" class="form-control" id="validFrom" formControlName="validFrom">
+        <div *ngIf="taskForm.controls['validFrom']['invalid']
+                  && (taskForm.controls['validFrom']['dirty'] || taskForm.controls['endsIn']['touched'])"
+             class="text-danger mt-2">
+          <div *ngIf="taskForm.controls['validFrom'].errors?.['required']">
+            Valid From cannot be empty
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="endsIn" class="form-label">Ends In</label>
+        <input type="date" class="form-control" id="endsIn" formControlName="endsIn">
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="mb-3 text-danger text-center">
+      <strong>{{ errorMessage }}</strong>
+    </div>
+
+    <button [hidden]="!taskForm.valid" type="submit" class="btn btn-primary w-100 mt-3 mb-3">Add</button>
+
+  </form>
+</div>
+
+<div [hidden]="showTaskForm" class="tasks">
+  <div class="active-tasks">
+    <h2>Active Tasks</h2>
+    <div class="active-tasks-items">
+      <app-task-item [tasks]="activeTasks" (taskUpdate)="updateTask($event)"></app-task-item>
+    </div>
+  </div>
+
+  <div class="recently-added-tasks">
+    <h2>Recently Added Tasks</h2>
+    <app-task-item [tasks]="recentlyCreatedTasks" (taskUpdate)="updateTask($event)"></app-task-item>
+  </div>
+</div>
+
+<div class="search-tasks mt-3 mb-3">
+  <h2>Search Tasks</h2>
+  <app-search [options]="searchOptions" (searchEvent)="searchTasks($event)"></app-search>
+
+  <div *ngIf="foundTasks.length > 0" class="found-tasks mt-3">
+    <app-task-item [tasks]="foundTasks"
+                   (taskUpdate)="updateTask($event)">
+    </app-task-item>
+  </div>
+<!--  <app-task-item *ngIf="foundTasks.length > 0"-->
+<!--                 [tasks]="foundTasks"-->
+<!--                 (taskUpdate)="updateTask($event)">-->
+<!--  </app-task-item>-->
+</div>

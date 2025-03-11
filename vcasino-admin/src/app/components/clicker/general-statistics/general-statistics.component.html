@@ -1,0 +1,25 @@
+<div *ngIf="show" class="general-statistics-wrapper">
+  <app-main-statistics [statistics]="mainStatistics" [formatValues]="true"></app-main-statistics>
+
+  <div class="charts mt-3">
+    <app-chart [label]="'Active Users'"
+               [chartData]="generalStatistics!.activeUsersChart"
+               [yCallback]="numberFormatYTicksCallback"
+               (chooseOptionEvent)="selectChartOption('activeUsers', $event)"
+               [type]="'line'">
+    </app-chart>
+
+    <app-chart [label]="'Total Clicks'"
+               [chartData]="generalStatistics!.totalClicksChart"
+               [yCallback]="numberFormatYTicksCallback"
+               (chooseOptionEvent)="selectChartOption('totalClicks', $event)"
+               [type]="'line'">
+    </app-chart>
+
+    <app-chart [label]="'Level Percentage'"
+               [chartData]="generalStatistics!.levelPercentageChart"
+               [yCallback]="levelYTicksCallback"
+               [type]="'bar'">
+    </app-chart>
+  </div>
+</div>

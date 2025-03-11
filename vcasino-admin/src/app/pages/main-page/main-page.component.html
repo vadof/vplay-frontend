@@ -13,36 +13,19 @@
 
   <div class="user-information mt-3" *ngIf="userInformation">
     <h2 class="text-center">Search User Information</h2>
-
-    <div class="user-search">
-      <div class="search-type d-flex">
-        <div class="form-check check-username">
-          <input class="form-check-input" type="radio" name="searchType" id="searchByUsername" value="username" [(ngModel)]="searchType">
-          <label class="form-check-label" for="searchByUsername">
-            By Username
-          </label>
-        </div>
-
-        <div class="form-check check-id">
-          <input class="form-check-input" type="radio" name="searchType" id="searchById" value="id" [(ngModel)]="searchType">
-          <label class="form-check-label" for="searchById">
-            By ID
-          </label>
-        </div>
-      </div>
-      <div class="search-input">
-        <input class="form-control mt-2" type="text" [(ngModel)]="searchQuery" [placeholder]="searchType === 'username' ? 'Enter Username' : 'Enter User ID'">
-        <button class="btn btn-primary mt-2" (click)="searchUser()">Search</button>
-      </div>
-    </div>
+    <app-search class="w-100 d-flex justify-content-center"
+                [options]="searchOptions"
+                (searchEvent)="searchUser($event)">
+    </app-search>
 
     <div class="information-items mt-2 mb-3">
       <div class="information-items-history mt-1">
-        <div class="btn btn-primary"
-             *ngFor="let username of searchHistory"
-             [class.btn-gray]="currentUser === username"
-             (click)="findUserByUsername(username)">
-          {{ username }}</div>
+        <button class="btn"
+             *ngFor="let information of searchHistory"
+             [class]="currentUserInformation?.username === information.username ? 'btn-primary-no-hover' : 'btn-gray'"
+             (click)="findUserByUsername(information.username)">
+          {{ information.username }}
+        </button>
       </div>
       <div class="information-item" *ngFor="let item of userInformation">
         <div class="information-item-title fw-bold">{{ item.label }}</div>
