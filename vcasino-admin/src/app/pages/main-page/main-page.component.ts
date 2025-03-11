@@ -9,6 +9,7 @@ import {IUserInformation} from "../../models/user/IUserInformation";
 import {FormsModule} from "@angular/forms";
 import {MainStatisticsComponent} from "../../components/main-statistics/main-statistics.component";
 import {SearchComponent} from "../../components/search/search.component";
+import {RegistrationFormComponent} from "../../components/registration-form/registration-form.component";
 
 @Component({
   selector: 'app-main-page',
@@ -21,7 +22,8 @@ import {SearchComponent} from "../../components/search/search.component";
     NgForOf,
     FormsModule,
     MainStatisticsComponent,
-    SearchComponent
+    SearchComponent,
+    RegistrationFormComponent
   ],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss'
@@ -32,15 +34,14 @@ export class MainPageComponent implements OnInit {
   userStatistics: { label: string, value: number }[] = [];
   userInformation: { label: string; value: any; clickable?: boolean }[] = [];
   currentUserInformation: IUserInformation | undefined;
-
-  searchQuery: string = '';
-  searchType: string = 'username';
   searchHistory: IUserInformation[] = [];
 
   searchOptions: {label: string, type: 'string' | 'number'}[] =  [
     {label: 'ID', type: 'number'},
     {label: 'Username', type: 'string'},
   ];
+
+  showRegistrationForm: boolean = false;
 
   constructor(private http: HttpService,
               private errorService: ErrorService) {
@@ -138,8 +139,12 @@ export class MainPageComponent implements OnInit {
     ];
   }
 
+  handleAdminRegistration(username: string) {
+    this.showRegistrationForm = false;
+    this.findUserByUsername(username);
+  }
+
   clearError() {
     this.errorMessage = '';
   }
-
 }

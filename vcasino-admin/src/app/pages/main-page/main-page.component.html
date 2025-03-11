@@ -11,35 +11,46 @@
                        [statistics]="userStatistics">
   </app-main-statistics>
 
-  <div class="user-information mt-3" *ngIf="userInformation">
-    <h2 class="text-center">Search User Information</h2>
-    <app-search class="w-100 d-flex justify-content-center"
-                [options]="searchOptions"
-                (searchEvent)="searchUser($event)">
-    </app-search>
+  <div class="main-content mt-3">
+    <div class="user-information" *ngIf="userInformation">
+      <h2>Search User Information</h2>
+      <app-search [options]="searchOptions"
+                  (searchEvent)="searchUser($event)">
+      </app-search>
 
-    <div class="information-items mt-2 mb-3">
-      <div class="information-items-history mt-1">
-        <button class="btn"
-             *ngFor="let information of searchHistory"
-             [class]="currentUserInformation?.username === information.username ? 'btn-primary-no-hover' : 'btn-gray'"
-             (click)="findUserByUsername(information.username)">
-          {{ information.username }}
-        </button>
-      </div>
-      <div class="information-item" *ngFor="let item of userInformation">
-        <div class="information-item-title fw-bold">{{ item.label }}</div>
-        <div class="information-item-value text-end">
-      <a
-        *ngIf="item.clickable; else normalText"
-        (click)="findUserByUsername(item.value)"
-        class="link"
-      >
-        {{ item.value }}
-      </a>
-          <ng-template #normalText>{{ item.value }}</ng-template>
+      <div class="information-items mt-2 mb-3">
+        <div class="information-items-history mt-1">
+          <button class="btn"
+                  *ngFor="let information of searchHistory"
+                  [class]="currentUserInformation?.username === information.username ? 'btn-primary-no-hover' : 'btn-gray'"
+                  (click)="findUserByUsername(information.username)">
+            {{ information.username }}
+          </button>
+        </div>
+        <div class="information-item" *ngFor="let item of userInformation">
+          <div class="information-item-title fw-bold">{{ item.label }}</div>
+          <div class="information-item-value text-end">
+            <a
+              *ngIf="item.clickable; else normalText"
+              (click)="findUserByUsername(item.value)"
+              class="link"
+            >
+              {{ item.value }}
+            </a>
+            <ng-template #normalText>{{ item.value }}</ng-template>
+          </div>
         </div>
       </div>
+    </div>
+
+    <div class="admin-registration">
+      <h2>Register Admin</h2>
+      <button class="btn btn-primary mb-2" (click)="showRegistrationForm = !showRegistrationForm">
+        {{ showRegistrationForm ? 'Close Form' : 'Open Form' }}
+      </button>
+      <app-registration-form *ngIf="showRegistrationForm"
+        (registeredAdminUsername)="handleAdminRegistration($event)">
+      </app-registration-form>
     </div>
   </div>
 
