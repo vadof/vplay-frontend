@@ -2,7 +2,8 @@ import {Component, HostListener, Input, OnInit, Renderer2} from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {CookieStorage} from "../../services/cookie-storage.service";
 import {IUser} from "../../models/auth/IUser";
-import {NgClass, NgIf} from "@angular/common";
+import {NgClass, NgIf, NgOptimizedImage} from "@angular/common";
+import {WalletService} from "../../services/wallet.service";
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,8 @@ import {NgClass, NgIf} from "@angular/common";
     NgIf,
     RouterLink,
     RouterLinkActive,
-    NgClass
+    NgClass,
+    NgOptimizedImage
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -22,9 +24,11 @@ export class HeaderComponent implements OnInit {
   @Input({required: false}) hideLoginBtn: boolean = false;
   @Input({required: false}) displayUser: boolean = true;
   sidebarOpen: boolean = false;
+  balance: string = '0.00';
 
   constructor(
     private cookieStorage: CookieStorage,
+    private walletService: WalletService,
     private renderer: Renderer2
   ) {
   }
@@ -37,6 +41,12 @@ export class HeaderComponent implements OnInit {
     const user: IUser | null = this.cookieStorage.getUser();
     if (user) {
       this.username = user.username;
+      this.walletService.balance$.subscribe((updatedBalance) => {
+        this.balance = updatedBalance.toFixed(2);
+      });
+      this.walletService.initBalance();
+
+      this.displayUser = true;
     }
   }
 

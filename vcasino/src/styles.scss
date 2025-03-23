@@ -47,6 +47,19 @@ body {
   }
 }
 
+.btn-primary-no-hover {
+  background-color: var(--yellow-color);
+  color: var(--dark-color);
+  border: none;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  &:hover {
+    background-color: var(--yellow-color);
+    color: var(--dark-color);
+  }
+}
+
 .btn-shadow {
   &:hover {
     box-shadow: 0 0 35px var(--yellow-shadow);

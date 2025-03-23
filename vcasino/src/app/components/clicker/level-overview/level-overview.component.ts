@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ILevel} from "../../../models/clicker/ILevel";
 import {ProgressComponent} from "../../progress/progress.component";
-import {calculateLevelProgress, getLevelColor} from "../../../utils/clicker-utils";
+import {calculateLevelProgress, getLevelColor, numberFormatter} from "../../../utils/clicker-utils";
 import {NgClass, NgIf, NgStyle} from "@angular/common";
 
 @Component({
@@ -40,7 +40,7 @@ export class LevelOverviewComponent implements OnInit {
     if (value === this.currentLevel) {
       this.progress = calculateLevelProgress(this.currentLevel, this.netWorth, this.levels);
       if (level.value < 10) {
-        this.levelInfo = `${this.netWorth}/${this.levels[value].netWorth}`
+        this.levelInfo = `${numberFormatter.format(this.netWorth)}/${numberFormatter.format(this.levels[value].netWorth)}`
       } else {
         this.levelInfo = `${level.netWorth}/${level.netWorth}`;
       }

@@ -17,6 +17,7 @@ import {ITask} from "../../models/clicker/tasks/ITask";
 import {numberFormatter} from "../../utils/clicker-utils";
 import {IAccountResponse} from "../../models/clicker/IAccountResponse";
 import {ISectionUpgrades} from "../../models/clicker/ISectionUpgrades";
+import {WalletComponent} from "../../components/clicker/wallet/wallet.component";
 
 @Component({
   selector: 'app-clicker-page',
@@ -31,7 +32,8 @@ import {ISectionUpgrades} from "../../models/clicker/ISectionUpgrades";
     LevelInfoComponent,
     LevelOverviewComponent,
     ErrorPopupComponent,
-    TasksComponent
+    TasksComponent,
+    WalletComponent
   ],
   templateUrl: './clicker-page.component.html',
   styleUrl: './clicker-page.component.scss'
@@ -40,7 +42,7 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
 
   errorMessage: string = '';
 
-  panel: 'tasks' | 'upgrades' | 'tap' | 'level' = 'tap';
+  panel: 'tap' | 'upgrades' | 'tasks' | 'level' | 'wallet' = 'tap';
   account!: IAccount;
   sectionUpgrades: ISectionUpgrades[] = [];
 
@@ -105,7 +107,7 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
     this.sectionUpgrades = accountResponse.sectionUpgrades;
   }
 
-  switchPanel(value: 'tasks' | 'upgrades' | 'tap' | 'level') {
+  switchPanel(value: 'tasks' | 'upgrades' | 'tap' | 'level' | 'wallet') {
     this.panel = value;
     this.showBalance = this.panel !== 'level';
 

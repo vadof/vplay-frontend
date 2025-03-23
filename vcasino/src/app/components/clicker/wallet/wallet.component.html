@@ -1,0 +1,87 @@
+<div class="wallet">
+
+  <div class="options">
+    <div class="option"
+         [class.option-selected]="selectedOption === 'w'"
+         (click)="switchOption('w')">
+      Withdraw VCoins
+    </div>
+    <div class="option" [class.option-selected]="selectedOption === 'd'"
+         (click)="switchOption('d')">
+      Deposit VCoins
+    </div>
+  </div>
+
+  <ng-container *ngIf="selectedOption === 'w'; else deposit">
+    <div class="description text-center mt-3">
+      <h3 class="description-title">Convert VCoins to VDollars</h3>
+      <div class="description-content mt-3">
+        <div><img ngSrc="vcoin.webp" alt="vcoin" width="24" height="24">100,000 VCoins are equivalent to</div>
+        <div><img ngSrc="vdollar.webp" alt="vdollar" width="35" height="20">1 VDollar</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #deposit>
+    <div class="description text-center mt-2">
+      <h3 class="description-title">Convert VDollars to VCoins</h3>
+      <div class="description-content mt-3">
+        <div><img ngSrc="vdollar.webp" alt="vdollar" width="35" height="20">1 VDollar is equivalent to</div>
+        <div><img ngSrc="vcoin.webp" alt="vcoin" width="24" height="24">90,000 VCoins (10% commission)</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="amount-form mt-3">
+    <button (click)="minus()" class="action-button">-</button>
+    <input class="form-control" type="number"
+           placeholder="Amount"
+           [(ngModel)]="selectedAmount"
+           (ngModelChange)="onValueChange($event)">
+    <button (click)="plus()" class="action-button">+</button>
+  </div>
+
+  <div class="slider-container mt-3">
+    <input
+      type="range"
+      [(ngModel)]="selectedAmount"
+      [min]="0"
+      [max]="sliderMax"
+      [step]="step"
+      [style]="progressBackground">
+  </div>
+
+  <div *ngIf="selectedAmount !== undefined && selectedAmount < valueChangeStep; else amount" class="converted-amount-description mt-4 text-danger">
+    <ng-container *ngIf="successMessage; else minimumError">
+      <div class="success-message text-success">{{ successMessage }}</div>
+    </ng-container>
+
+    <ng-template #minimumError>
+      <div class="converted-amount-first">The minimum amount for conversion is</div>
+      <ng-container *ngIf="selectedOption === 'w'; else dRate">
+        <div class="converted-amount-second"><img ngSrc="vcoin.webp" alt="vcoin" width="24" height="24"><span>100,000 VCoins</span></div>
+      </ng-container>
+      <ng-template #dRate>
+        <div class="converted-amount-second"><img ngSrc="vdollar.webp" alt="vdollar" width="35" height="20"><span>1 VDollar</span></div>
+      </ng-template>
+    </ng-template>
+  </div>
+
+  <ng-template #amount>
+    <div class="converted-amount text-center mb-3">
+      <div class="converted-amount-description mt-4">
+        <div class="converted-amount-first">Amount to be received</div>
+        <ng-container *ngIf="selectedOption === 'w'; else dAmount">
+          <div class="converted-amount-second"><img ngSrc="vdollar.webp" alt="vdollar" width="35" height="20"><span>{{ convertedAmount }} VDollars</span></div>
+        </ng-container>
+        <ng-template #dAmount>
+          <div class="converted-amount-second"><img ngSrc="vcoin.webp" alt="vcoin" width="24" height="24"><span>{{ convertedAmount }} VCoins</span></div>
+        </ng-template>
+      </div>
+
+      <button (click)="confirmConversion()" class="btn btn-primary-no-hover confirm-button">Confirm</button>
+    </div>
+
+  </ng-template>
+
+</div>

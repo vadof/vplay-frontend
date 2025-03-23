@@ -24,18 +24,27 @@
 
     <!-- Right elements -->
     <ng-container *ngIf="username && displayUser; else btnTemplate">
-      <div class="right-elements dropdown-center">
-        <a class="profile align-items-center dropdown-toggle" data-bs-toggle="dropdown">
-          <div class="justify-content-between d-flex align-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M406.5 399.6C387.4 352.9 341.5 320 288 320H224c-53.5 0-99.4 32.9-118.5 79.6C69.9 362.2 48 311.7 48 256C48 141.1 141.1 48 256 48s208 93.1 208 208c0 55.7-21.9 106.2-57.5 143.6zm-40.1 32.7C334.4 452.4 296.6 464 256 464s-78.4-11.6-110.5-31.7c7.3-36.7 39.7-64.3 78.5-64.3h64c38.8 0 71.2 27.6 78.5 64.3zM256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-272a40 40 0 1 1 0-80 40 40 0 1 1 0 80zm-88-40a88 88 0 1 0 176 0 88 88 0 1 0 -176 0z"/></svg>
+      <div class="user-profile-wrapper dropdown-center">
+        <div class="user-profile dropdown-toggle" data-bs-toggle="dropdown">
+          <div class="user-profile-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="user-profile-right">
             <div class="username">{{ username }}</div>
+            <div class="balance">
+              <span class="balance-value">{{ balance }}</span>
+              <img ngSrc="vdollar-dark.webp" alt="vdollar" width="25" height="15">
+            </div>
           </div>
 
           <ul class="dropdown-menu">
             <li><a class="dropdown-item">Profile</a></li>
             <li><a class="dropdown-item logout" (click)="logout()">Logout</a></li>
           </ul>
-        </a>
+        </div>
       </div>
     </ng-container>
 
