@@ -3,6 +3,7 @@ import {RouterOutlet} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {CookieStorage} from "./services/cookie-storage.service";
 import {EventBusService} from "./shared/event-bus.service";
+import {NotificationService} from "./services/notification.service";
 
 @Component({
   selector: 'app-root',
@@ -16,13 +17,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private cookieStorage: CookieStorage,
-    private eventBusService: EventBusService
+    private eventBusService: EventBusService,
+    private notificationService: NotificationService
   ) {
   }
 
   ngOnInit(): void {
     this.eventBusSub = this.eventBusService.on('logout', () => {
       this.cookieStorage.signOut();
+      this.notificationService.stopListening();
     });
   }
 

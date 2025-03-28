@@ -2,8 +2,10 @@ import {Component, HostListener, Input, OnInit, Renderer2} from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {CookieStorage} from "../../services/cookie-storage.service";
 import {IUser} from "../../models/auth/IUser";
-import {NgClass, NgIf, NgOptimizedImage} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {WalletService} from "../../services/wallet.service";
+import {NotificationService} from "../../services/notification.service";
+import {INotification} from "../../models/INotification";
 
 @Component({
   selector: 'app-header',
@@ -13,7 +15,8 @@ import {WalletService} from "../../services/wallet.service";
     RouterLink,
     RouterLinkActive,
     NgClass,
-    NgOptimizedImage
+    NgOptimizedImage,
+    NgForOf
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -26,10 +29,13 @@ export class HeaderComponent implements OnInit {
   sidebarOpen: boolean = false;
   balance: string = '0.00';
 
+  notifications: {message: string, fadeOut: boolean}[] = [];
+
   constructor(
     private cookieStorage: CookieStorage,
     private walletService: WalletService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -41,12 +47,46 @@ export class HeaderComponent implements OnInit {
     const user: IUser | null = this.cookieStorage.getUser();
     if (user) {
       this.username = user.username;
-      this.walletService.balance$.subscribe((updatedBalance) => {
+
+      this.walletService.balance$.subscribe((updatedBalance: number) => {
         this.balance = updatedBalance.toFixed(2);
       });
+
+      this.notificationService.notifications$.subscribe((notification: INotification) => {
+        this.handleNotification(notification);
+      })
+
       this.walletService.initBalance();
 
+      this.notificationService.startListening()
       this.displayUser = true;
+    } else {
+      this.notificationService.stopListening();
+    }
+  }
+
+  private handleNotification(notification: INotification) {
+    if (notification.type === null) return;
+    const obj = {message: notification.message, fadeOut: false};
+
+    setTimeout(() => {
+      const index: number = this.notifications.indexOf(obj);
+      if (index !== -1) {
+        obj.fadeOut = true;
+
+        setTimeout(() => {
+          this.notifications.splice(index, 1);
+        }, 500);
+      }
+    }, 10000);
+
+    this.notifications.push(obj);
+  }
+
+  closeNotification(notification: { message: string; fadeOut: boolean }) {
+    const index: number = this.notifications.indexOf(notification);
+    if (index !== -1) {
+      this.notifications.splice(index, 1);
     }
   }
 

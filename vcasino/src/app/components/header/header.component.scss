@@ -266,6 +266,68 @@ $sidebar-width: 15rem;
   z-index: 999;
 }
 
+.notifications {
+  position: absolute;
+  z-index: 2;
+  right: 2rem;
+
+  @media (max-width: 1000px) {
+    right: 1rem;
+  }
+
+  .notification {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--white-color);
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px;
+    background-color: var(--bs-success);
+    border-radius: var(--bs-border-radius);
+
+    .notification-close {
+      cursor: pointer;
+      margin-left: 5px;
+      margin-top: -2px;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.notification.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.notification {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.notification.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
 @media (max-width: 767px) {
   .container {
     max-width: 100%;

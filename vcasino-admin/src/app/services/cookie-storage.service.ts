@@ -38,7 +38,7 @@ export class CookieStorage {
   }
 
   public saveRole(role: string): void {
-    this.cookieService.set(ROLE_KEY, role, undefined, '/')
+    this.cookieService.set(ROLE_KEY, role, undefined, '/');
   }
 
   public getRole(): string | null {
