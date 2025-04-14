@@ -1,0 +1,64 @@
+<div class="match-wrapper">
+
+  <div class="back" (click)="backToMatches()">
+    <div class="back-icon"></div>
+    <div class="back-text">Back</div>
+  </div>
+
+  <div class="match-header">
+
+    <div class="match-header-date">Apr 16 20:00</div>
+    <div class="match-header-participants">
+      <div class="header-participant header-participant1">
+        <div class="header-participant-name">{{ match.participant1.name }}</div>
+        <img [ngSrc]=" match.participant1.image" width="36" height="36" alt="">
+      </div>
+      <span>VS</span>
+      <div class="header-participant header-participant2">
+        <img [ngSrc]=" match.participant2.image" width="36" height="36" alt="">
+        <div class="header-participant-name">{{ match.participant2.name }}</div>
+      </div>
+    </div>
+
+    <div class="horizontal-divider"></div>
+
+    <div class="market-categories">
+      <div class="market-category"
+           *ngFor="let category of marketCategories"
+           [class.market-category-selected]="category === selectedMarketCategory"
+      (click)="selectMarketCategory(category)">
+        {{ category }}
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="match-markets">
+
+    <div *ngFor="let item of marketsToShow" class="market-section">
+      <div class="market-section-title">{{ item.category }}</div>
+
+      <div *ngFor="let pair of item.marketPairs" class="market-pair">
+
+        <div class="market-pair-item" (click)="selectMarket(pair[0])"
+             [class.market-selected]="selectedMarket !== null && selectedMarket.market.id === pair[0].id"
+             [ngClass]="{'odds-effect-increase': pair[0].oddsIncreased === true, 'odds-effect-decrease' : pair[0].oddsIncreased === false }">
+          <div class="pair-item-outcome">{{ pair[0].outcomeStr }}</div>
+          <div class="pair-item-odds">{{ pair[0].oddsStr }}</div>
+        </div>
+        <div class="market-pair-item" (click)="selectMarket(pair[1])"
+             [class.market-selected]="selectedMarket !== null && selectedMarket.market.id === pair[1].id"
+             [ngClass]="{'odds-effect-increase': pair[1].oddsIncreased === true, 'odds-effect-decrease' : pair[1].oddsIncreased === false }">
+          <div class="pair-item-outcome">{{ pair[1].outcomeStr }}</div>
+          <div class="pair-item-odds">{{ pair[1].oddsStr }}</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+

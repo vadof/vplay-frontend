@@ -1,0 +1,144 @@
+.tournament-sidebar {
+  background: var(--dark-gray-color);
+  border-radius: 10px;
+  max-width: 210px;
+}
+
+.back {
+  display: none;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 15px 10px 0 10px;
+  cursor: pointer;
+  align-items: center;
+  position: relative;
+  margin-left: 3px;
+  .back-icon {
+    rotate: -135deg;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid var(--white-color);
+    border-right: 2px solid var(--white-color);
+  }
+
+  .back-text {
+    margin-left: 15px;
+    width: 100%;
+  }
+}
+
+.title {
+  padding: 10px 10px 5px 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tournaments-title {
+  padding: 15px 10px 10px 10px;
+}
+
+.tournament-item {
+  display: flex;
+  align-items: center;
+  color: var(--light-gray-color);
+  line-height: 1;
+  padding: 5px 10px;
+
+  cursor: pointer;
+  &:hover {
+    background: var(--gray-color);
+  }
+
+  .tournament-image {
+    margin-right: 5px;
+  }
+
+}
+
+.discipline-row {
+  padding: 10px;
+  color: var(--light-gray-color);
+  cursor: pointer;
+
+  .discipline-image {
+    margin-right: 5px;
+  }
+
+  &:hover {
+    background: var(--gray-color);
+  }
+}
+
+.discipline-row-selected {
+  background: var(--gray-color);
+}
+
+@mixin icon() {
+  position: relative;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  span {
+    position: absolute;
+    top: -2px;
+  }
+}
+
+.discipline-closed-icon {
+  @include icon();
+  background: var(--light-gray-color);
+  span {
+    left: 6px;
+  }
+}
+
+.discipline-opened-icon {
+  @include icon();
+  background: var(--yellow-color);
+  span {
+    left: 7px;
+  }
+}
+
+.discipline-tournaments {
+  .tournament-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tournament-item {
+    padding: 5px 15px;
+    &:hover {
+      background: var(--dark-gray-color);
+    }
+  }
+}
+
+.discipline-item-opened {
+  background-color: var(--gray-color);
+}
+
+.tournament-item-selected {
+  background-color: var(--yellow-color);
+  color: var(--dark-color);
+  &:hover {
+    background: var(--yellow-color) !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .tournament-sidebar {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    position: absolute;
+    max-height: 100%;
+  }
+
+  .back {
+    display: flex;
+  }
+}

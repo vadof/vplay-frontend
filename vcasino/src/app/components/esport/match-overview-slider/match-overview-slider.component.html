@@ -1,0 +1,70 @@
+<div class="slider-wrapper d-flex">
+
+  <div class="swipe left-swipe" (click)="scrollLeft()">
+    <div class="swipe-left-icon"></div>
+  </div>
+
+  <div class="match-items" #scrollContainer>
+
+    <div class="match-item"
+         (click)="selectMatch(match)"
+         *ngFor="let match of matches">
+
+      <div class="match-item-top d-flex justify-content-between mb-10">
+        <div class="match-item-discipline d-flex">
+          <div class="discipline-image">
+            <img [ngSrc]="'esport/' + match.tournament.discipline + '.webp'" width="15" height="15" alt="">
+          </div>
+          <div class="discipline-name">{{ match.tournament.discipline }}</div>
+        </div>
+        <div class="match-status">Live in: 1h 21min</div>
+      </div>
+
+      <div class="match-item-participants">
+        <div class="match-item-participant d-flex mb-10">
+          <div class="participant-image">
+            <img [ngSrc]="match.participant1.image" width="20" height="20" alt="">
+          </div>
+          <div class="participant-name">{{ match.participant1.name }}</div>
+        </div>
+        <div class="match-item-participant d-flex">
+          <div class="participant-image">
+            <img [ngSrc]="match.participant2.image" width="20" height="20" alt="">
+          </div>
+          <div class="participant-name">{{ match.participant2.name }}</div>
+        </div>
+      </div>
+
+      <div class="horizontal-divider"></div>
+
+      <div class="match-item-winner-market">
+        <div class="winner-market-text text-center">Match winner</div>
+
+        <div class="winner-market-row d-flex justify-content-between">
+          <div class="winner-market d-flex justify-content-between"
+               [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket1.id"
+               [ngClass]="{'odds-effect-increase': match.winnerMatchMarket1.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket1.oddsIncreased === false }"
+               (click)="selectMarket(match.winnerMatchMarket1, match); $event.stopPropagation()">
+            <span>1</span>
+            <span class="odds">{{ match.winnerMatchMarket1.odds }}</span>
+          </div>
+          <div class="winner-market d-flex justify-content-between"
+               [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket2.id"
+               [ngClass]="{'odds-effect-increase': match.winnerMatchMarket2.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket2.oddsIncreased === false }"
+               (click)="selectMarket(match.winnerMatchMarket2, match); $event.stopPropagation()">
+            <span>2</span>
+            <span class="odds">{{ match.winnerMatchMarket2.odds }}</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="swipe right-swipe" (click)="scrollRight()">
+    <div class="swipe-right-icon"></div>
+  </div>
+
+</div>

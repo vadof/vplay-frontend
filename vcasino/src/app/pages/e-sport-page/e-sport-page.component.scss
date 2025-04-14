@@ -1,0 +1,130 @@
+.esport-container {
+  position: relative;
+  width: 100%;
+}
+
+.header-items-wrapper {
+  display: none;
+  width: 100%;
+  background: var(--gray-color);
+
+  .header-items {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--light-gray-color);
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    .header-item {
+      display: none;
+      background: var(--dark-gray-color);
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+
+      &:not(:last-child) {
+        cursor: pointer;
+        &:hover {
+          color: var(--white-color);
+        }
+      }
+
+      &:last-child {
+        color: var(--white-color);
+        font-weight: 700;
+        justify-content: space-between;
+        span:first-child {
+          padding-right: 10px;
+        }
+      }
+    }
+  }
+}
+
+.container {
+  width: 100% !important;
+  padding: 0.5rem 0;
+}
+
+app-tournament-sidebar {
+  max-width: 18%;
+}
+
+.main-section-wrapper {
+  max-width: 58.5%;
+  width: 100%;
+  padding: 0 15px;
+}
+
+app-bet-info {
+  max-width: 25%;
+}
+
+.main-section-bottom {
+  .section-title {
+    margin: 20px 0 15px 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 1200px) {
+  .header-items-wrapper {
+    display: block;
+    .header-item-sports {
+      display: block !important;
+    }
+  }
+
+  .container {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  app-tournament-sidebar {
+    display: none;
+  }
+
+  .main-section-wrapper {
+    padding: 0 15px;
+    max-width: 65%;
+    width: 100%;
+  }
+
+  app-bet-info {
+    max-width: 35%;
+    width: 100%;
+  }
+
+  .sidebar-visible {
+    width: 100%;
+    max-width: 100%;
+    display: block !important;
+    position: absolute;
+    top: 0;
+    z-index: 9;
+  }
+}
+
+@media (max-width: 991px) {
+  .header-items-wrapper {
+    .header-item-bets {
+      display: block !important;
+    }
+    .header-item-balance {
+      display: flex !important;
+    }
+  }
+
+  .main-section-wrapper {
+    max-width: 100%;
+  }
+
+  app-bet-info {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}

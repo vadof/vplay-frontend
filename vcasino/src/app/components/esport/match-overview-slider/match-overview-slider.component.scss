@@ -1,0 +1,116 @@
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.swipe {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  min-width: 30px;
+  background: var(--dark-gray-color);
+  border-radius: 6px;
+  cursor: pointer;
+
+  div {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-top: 3px solid #8b8e93;
+    border-right: 3px solid #8b8e93;
+  }
+}
+
+.left-swipe {
+  margin-right: 7px;
+
+  div {
+    left: 10px;
+    rotate: -135deg;
+  }
+}
+
+.right-swipe {
+  margin-left: 7px;
+
+  div {
+    left: 3px;
+    rotate: 45deg;
+  }
+}
+
+.slider-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.match-items {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.match-item {
+  width: 218px;
+  flex-shrink: 0;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 6px;
+  background: var(--gray-color);
+  cursor: pointer;
+
+  &:not(:last-child) {
+    margin-right: 7px;
+  }
+
+  img {
+    margin-right: 5px;
+  }
+
+  .horizontal-divider {
+    height: 1px;
+    background-color: #34383F;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+  }
+
+  .winner-market-text {
+    color: var(--light-gray-color);
+  }
+
+  .winner-market {
+    width: 50%;
+    font-weight: 700;
+    padding: 7px 10px;
+    background: var(--dark-gray-color);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--yellow-color);
+      color: var(--dark-color);
+    }
+
+    &:first-child {
+      margin-right: 1px;
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+
+  .winner-market-selected {
+    background: var(--yellow-color);
+    color: var(--dark-color);
+  }
+}
+

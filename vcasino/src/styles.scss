@@ -113,3 +113,29 @@ body {
   overflow: hidden;
   height: 100vh;
 }
+
+.odds-effect-increase {
+  animation: flash-green 2s ease-in-out;
+}
+
+.odds-effect-decrease {
+  animation: flash-red 2s ease-in-out;
+}
+
+@keyframes flash-green {
+  0% {
+    box-shadow: 0 -2px 0 var(--bs-success);
+  }
+  100% {
+    box-shadow: 0 -2px 0 transparent;
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    box-shadow: 0 2px 0 var(--bs-danger);
+  }
+  100% {
+    box-shadow: 0 2px 0 transparent;
+  }
+}

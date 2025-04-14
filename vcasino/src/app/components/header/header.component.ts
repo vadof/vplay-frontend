@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   @Input({required: false}) hideRegisterBtn: boolean = false;
   @Input({required: false}) hideLoginBtn: boolean = false;
   @Input({required: false}) displayUser: boolean = true;
+  @Input({required: false}) applyMargin: boolean = true;
   sidebarOpen: boolean = false;
   balance: string = '0.00';
 

@@ -1,0 +1,52 @@
+<div class="tournament-sidebar">
+
+  <div class="back" (click)="closeSidebar()">
+    <div class="back-icon"></div>
+    <div class="back-text">Back</div>
+  </div>
+
+  <div class="tournaments-title title">Tournaments</div>
+  <div class="tournament-item"
+       (click)="selectTournament(tournament)"
+       [class.tournament-item-selected]="selectedTournamentId === tournament.id"
+       *ngFor="let tournament of tournaments">
+    <div class="tournament-image">
+      <img [ngSrc]="tournament.image" width="24" height="24" alt="">
+    </div>
+    <div class="tournament-title">
+      {{ tournament.discipline + '. ' + tournament.title }}
+    </div>
+  </div>
+
+  <div class="title">Disciplines</div>
+  <div [class.discipline-item-opened]="discipline.opened"
+       class="discipline-item" *ngFor="let discipline of disciplineTournaments">
+    <div [class.discipline-row-selected]="selectedDiscipline === discipline.discipline" class="discipline-row d-flex align-items-center"
+         (click)="selectDiscipline(discipline.discipline); $event.stopPropagation()">
+      <div class="discipline-image">
+        <img [ngSrc]="discipline.image" width="24" height="24" alt="">
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between w-100">
+        <div class="discipline-title">{{ discipline.discipline }}</div>
+        <div (click)="openCloseDiscipline(discipline); $event.stopPropagation()" *ngIf="!discipline.opened" class="discipline-closed-icon"><span>+</span></div>
+        <div (click)="openCloseDiscipline(discipline); $event.stopPropagation()" *ngIf="discipline.opened" class="discipline-opened-icon"><span>-</span></div>
+      </div>
+    </div>
+
+    <div *ngIf="discipline.opened" class="discipline-tournaments">
+      <div class="tournament-item"
+           (click)="selectTournament(tournament)"
+           [class.tournament-item-selected]="selectedTournamentId === tournament.id"
+           *ngFor="let tournament of discipline.tournaments">
+        <div class="tournament-image">
+          <img [ngSrc]="tournament.image" width="24" height="24" alt="">
+        </div>
+        <div class="tournament-title">
+          {{ tournament.title }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

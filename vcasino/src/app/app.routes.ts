@@ -7,6 +7,7 @@ import {ClickerPageComponent} from "./pages/clicker-page/clicker-page.component"
 import {LoginSuccessPageComponent} from "./pages/auth/login-success-page/login-success-page.component";
 import {ConfirmationPageComponent} from "./pages/auth/confirmation-page/confirmation-page.component";
 import {ErrorPageComponent} from "./pages/error-page/error-page.component";
+import {ESportPageComponent} from "./pages/e-sport-page/e-sport-page.component";
 
 export const routes: Routes = [
   {path: 'error', component: ErrorPageComponent},
@@ -16,4 +17,5 @@ export const routes: Routes = [
   {path: 'register/confirmation', component: ConfirmationPageComponent},
   {path: '', component: MainPageComponent},
   {path: 'clicker', component: ClickerPageComponent, canActivate: [authGuard]},
+  {path: 'esport', component: ESportPageComponent},
 ];

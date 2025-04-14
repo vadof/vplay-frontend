@@ -1,0 +1,44 @@
+<div (click)="selectMatch(match)" class="match-item" *ngFor="let match of matches">
+
+  <div class="match-item-top">
+    <div (click)="selectTournament(match.tournament); $event.stopPropagation()">{{ match.tournament.discipline + ". " + match.tournament.title }}</div>
+    <div>Match Winner</div>
+  </div>
+
+  <div class="match-item-bottom">
+
+    <div class="match-left">
+      <div class="match-date">Apr 16 16:00</div>
+
+      <div class="match-participants">
+        <img [ngSrc]="match.participant1.image" width="24" height="24" alt="">
+        <span>{{ match.participant1.name }}</span>
+        <span class="dash">-</span>
+        <img [ngSrc]="match.participant2.image" width="24" height="24" alt="">
+        <span>{{ match.participant2.name }}</span>
+      </div>
+    </div>
+
+    <div class="match-right">
+      <div class="winner-market-row d-flex justify-content-between">
+        <div class="winner-market"
+             [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket1.id"
+             [ngClass]="{'odds-effect-increase': match.winnerMatchMarket1.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket1.oddsIncreased === false }"
+             (click)="selectMarket(match.winnerMatchMarket1, match); $event.stopPropagation()">
+          <span>1</span>
+          <span class="odds">{{ match.winnerMatchMarket1.odds }}</span>
+        </div>
+        <div class="winner-market"
+             [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket2.id"
+             [ngClass]="{'odds-effect-increase': match.winnerMatchMarket2.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket2.oddsIncreased === false }"
+             (click)="selectMarket(match.winnerMatchMarket2, match); $event.stopPropagation()">
+          <span>2</span>
+          <span class="odds">{{ match.winnerMatchMarket2.odds }}</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

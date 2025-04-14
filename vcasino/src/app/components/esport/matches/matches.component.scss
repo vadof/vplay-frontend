@@ -1,0 +1,100 @@
+.match-item {
+  font-size: 14px;
+  padding: 5px 10px;
+  background: var(--gray-color);
+  border-radius: 10px;
+  cursor: pointer;
+
+  .match-item-top {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    div:first-child {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+        color: var(--yellow-color);
+      }
+    }
+
+    div:last-child {
+      text-align: center;
+      color: var(--light-gray-color);
+    }
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  .match-item-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .match-left {
+    .match-date {
+      color: var(--light-gray-color);
+    }
+
+    .match-participants {
+      margin-top: 5px;
+      .dash {
+        margin: 0 7px;
+      }
+
+      img {
+        margin-right: 5px;
+      }
+    }
+  }
+
+
+
+  .match-right {
+
+    .winner-market-row {
+      .winner-market {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--dark-gray-color);
+        padding: 5px 0;
+        width: 100%;
+
+        &:first-child {
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+          border-right: 1px solid #34383F;
+        }
+
+        &:last-child {
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+        }
+
+        &:hover {
+          color: var(--dark-color);
+          background: var(--yellow-color);
+        }
+
+        span {
+          font-size: 12px;
+        }
+
+        .odds {
+          font-size: 14px;
+          font-weight: 700;
+        }
+      }
+
+      .winner-market-selected {
+        color: var(--dark-color);
+        background: var(--yellow-color);
+      }
+    }
+  }
+}

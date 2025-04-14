@@ -1,0 +1,85 @@
+<app-header [applyMargin]="false"></app-header>
+<app-error-popup
+  *ngIf="errorMessage"
+  [errorMessage]="errorMessage"
+  (closeEvent)="clearError()">
+</app-error-popup>
+
+<div class="esport-container">
+
+  <div class="header-items-wrapper">
+    <div class="container">
+      <div class="header-items">
+        <div class="header-item header-item-sports" (click)="toggleTournamentSidebar(true)">Sports</div>
+        <div class="header-item header-item-bets">My bets</div>
+        <div class="header-item header-item-balance">
+          <span>Balance</span>
+          <span>3.45</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex container">
+
+    <!--  Left side-->
+    <app-tournament-sidebar [class.sidebar-visible]="showTournamentSidebar"
+                            [tournaments]="tournaments"
+                            (selectTournamentEvent)="filterMatchesByTournament($event)"
+                            (selectDisciplineEvent)="filterMatchesByDiscipline($event)"
+                            (closeSidebarEvent)="toggleTournamentSidebar(false)"
+    ></app-tournament-sidebar>
+    <!--  Left side-->
+
+    <ng-container *ngIf="!selectedMatch; else match">
+      <div class="main-section-wrapper">
+        <!--  Main top -->
+        <div class="main-section-top">
+          <app-match-overview-slider
+            [matches]="matches"
+            [selectedMarket]="selectedMarket"
+            (selectMatchEvent)="selectMatch($event)"
+            (selectMarketEvent)="selectMarket($event)"
+          ></app-match-overview-slider>
+        </div>
+        <!--  Main top -->
+
+        <!--  Main bottom-->
+        <div class="main-section-bottom">
+          <div *ngFor="let section of matchesByTitle">
+            <div class="section-title">{{ section.title }}</div>
+            <app-matches
+              [matches]="section.matches"
+              [selectedMarket]="selectedMarket"
+              (selectMatchEvent)="selectMatch($event)"
+              (selectMarketEvent)="selectMarket($event)"
+              (selectTournamentEvent)="filterMatchesByTournament($event)"
+            ></app-matches>
+          </div>
+        </div>
+        <!--  Main bottom-->
+      </div>
+    </ng-container>
+
+    <ng-template #match>
+      <div class="main-section-wrapper">
+        <app-match
+          [match]="selectedMatch!"
+          [selectedMarket]="selectedMarket"
+          (selectMarketEvent)="selectMarket($event)"
+          (selectMatchEvent)="selectMatch($event)"
+        ></app-match>
+      </div>
+    </ng-template>
+
+
+
+    <!--  Right side-->
+    <app-bet-info
+      [selectedMarket]="selectedMarket"
+      [opened]="showBetInfoMobile"
+      (selectMarketEvent)="selectMarket($event)"
+    ></app-bet-info>
+    <!--  Right side-->
+  </div>
+</div>
