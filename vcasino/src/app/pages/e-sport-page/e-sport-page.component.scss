@@ -5,6 +5,7 @@
 
 .header-items-wrapper {
   display: none;
+  padding: 0 15px;
   width: 100%;
   background: var(--gray-color);
 
@@ -54,7 +55,24 @@ app-tournament-sidebar {
 .main-section-wrapper {
   max-width: 59.8%;
   width: 100%;
-  padding: 0 15px;
+  padding: 0 5px;
+  margin: 0 10px;
+
+  overflow-y: scroll;
+  height: calc(100vh - 79px);
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--gray-color);
+    border-radius: 50px;
+  }
 }
 
 app-bet-info {
@@ -108,9 +126,9 @@ app-bet-info {
   }
 
   .main-section-wrapper {
-    padding: 0 15px;
     max-width: 65%;
     width: 100%;
+    height: calc(100vh - 140px);
   }
 
   app-bet-info {
@@ -130,6 +148,7 @@ app-bet-info {
 
 @media (max-width: 991px) {
   .header-items-wrapper {
+    padding: 0 11px 0 10px;
     .header-item-bets {
       display: block !important;
     }
@@ -140,6 +159,9 @@ app-bet-info {
 
   .main-section-wrapper {
     max-width: 100%;
+    height: calc(100vh - 180px);
+    padding: 0 3px 0 5px;
+    margin: 0 3px 0 5px;
   }
 
   app-bet-info {
@@ -147,5 +169,16 @@ app-bet-info {
     bottom: 0;
     width: 100%;
     max-width: 100%;
+  }
+}
+
+@media (max-width: 379px) {
+  .header-items-wrapper {
+    .header-items {
+      gap: 5px;
+      .header-item {
+        padding: 10px 5px;
+      }
+    }
   }
 }

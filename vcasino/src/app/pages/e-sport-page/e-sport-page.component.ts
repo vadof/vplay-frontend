@@ -112,11 +112,13 @@ export class ESportPageComponent implements OnInit, OnDestroy {
         }, msUntilNextMinute);
 
       }, err => this.errorService.handleError(err));
+    document.body.style.overflowY = 'hidden';
   }
 
   ngOnDestroy() {
     this.webSocket.unsubscribe();
     if (this.matchDateIntervalId) clearInterval(this.matchDateIntervalId);
+    document.body.style.overflowY = 'auto';
   }
 
   clearError() {
@@ -164,7 +166,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
       if (!group[t.discipline]) {
         group[t.discipline] = [];
       }
-      t.matches.forEach(m => group[t.discipline].push(m))
+      t.matches.forEach(m => group[t.discipline].push(m));
     })
 
     this.matchesByTitle = Object.keys(group).map(key => ({
