@@ -17,7 +17,7 @@
           </div>
           <div class="discipline-name">{{ match.tournament.discipline }}</div>
         </div>
-        <div class="match-status">Live in: 1h 21min</div>
+        <div class="match-status" [class.live-text]="match.dateText === 'LIVE'">{{ match.dateText }}</div>
       </div>
 
       <div class="match-item-participants">
@@ -40,22 +40,27 @@
       <div class="match-item-winner-market">
         <div class="winner-market-text text-center">Match winner</div>
 
-        <div class="winner-market-row d-flex justify-content-between">
-          <div class="winner-market d-flex justify-content-between"
-               [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket1.id"
-               [ngClass]="{'odds-effect-increase': match.winnerMatchMarket1.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket1.oddsIncreased === false }"
-               (click)="selectMarket(match.winnerMatchMarket1, match); $event.stopPropagation()">
-            <span>1</span>
-            <span class="odds">{{ match.winnerMatchMarket1.odds }}</span>
+        <ng-container *ngIf="!match.winnerMatchMarkets.closed; else closedMarkets">
+          <div class="winner-market-row d-flex">
+            <div *ngFor="let market of match.winnerMatchMarkets.markets; let i = index"
+                 class="winner-market d-flex justify-content-between"
+                 [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === market.id"
+                 [ngClass]="{'odds-effect-increase': market.oddsIncreased === true, 'odds-effect-decrease' : market.oddsIncreased === false }"
+                 (click)="selectMarket(market, match); $event.stopPropagation()">
+              <span>{{ i + 1 }}</span>
+              <span class="odds">{{ market.odds }}</span>
+            </div>
           </div>
-          <div class="winner-market d-flex justify-content-between"
-               [class.winner-market-selected]="selectedMarket !== null && selectedMarket.market.id === match.winnerMatchMarket2.id"
-               [ngClass]="{'odds-effect-increase': match.winnerMatchMarket2.oddsIncreased === true, 'odds-effect-decrease' : match.winnerMatchMarket2.oddsIncreased === false }"
-               (click)="selectMarket(match.winnerMatchMarket2, match); $event.stopPropagation()">
-            <span>2</span>
-            <span class="odds">{{ match.winnerMatchMarket2.odds }}</span>
+        </ng-container>
+        <ng-template #closedMarkets>
+          <div class="winner-market-row d-flex">
+            <div *ngFor="let market of match.winnerMatchMarkets.markets"
+                 class="winner-market winner-market-closed text-center">
+              <strong>–</strong>
+            </div>
           </div>
-        </div>
+        </ng-template>
+
 
       </div>
 

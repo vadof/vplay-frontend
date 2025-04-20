@@ -1,6 +1,6 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {IMatch} from "../../../models/esport/IMatch";
-import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {ISelectedMarket} from "../../../models/esport/ISelectedMarket";
 import {IMarket} from "../../../models/esport/IMarket";
 
@@ -10,22 +10,20 @@ import {IMarket} from "../../../models/esport/IMarket";
   imports: [
     NgForOf,
     NgOptimizedImage,
-    NgClass
+    NgClass,
+    NgIf
   ],
   templateUrl: './match-overview-slider.component.html',
   styleUrl: './match-overview-slider.component.scss'
 })
-export class MatchOverviewSliderComponent implements OnInit {
-  @ViewChild('scrollContainer', { static: true }) scrollContainer!: ElementRef;
+export class MatchOverviewSliderComponent {
+  @ViewChild('scrollContainer', {static: true}) scrollContainer!: ElementRef;
   @Input({required: true}) matches: IMatch[] = [];
   @Input({required: true}) selectedMarket: ISelectedMarket | null = null;
   @Output() selectMatchEvent: EventEmitter<IMatch> = new EventEmitter<IMatch>;
   @Output() selectMarketEvent: EventEmitter<ISelectedMarket | null> = new EventEmitter<ISelectedMarket | null>;
 
   private scrollAmount: number = 225;
-
-  ngOnInit(): void {
-  }
 
   scrollLeft(): void {
     const el = this.scrollContainer.nativeElement;
@@ -67,11 +65,10 @@ export class MatchOverviewSliderComponent implements OnInit {
   }
 
   selectMarket(market: IMarket, match: IMatch) {
-    console.log("SELECTED")
     if (this.selectedMarket !== null && this.selectedMarket.market.id === market.id) {
       this.selectedMarket = null;
     } else {
-      this.selectedMarket = {market, match};
+      this.selectedMarket = {market, match, marketCategory: 'Match Winner'};
     }
     this.selectMarketEvent.emit(this.selectedMarket);
   }

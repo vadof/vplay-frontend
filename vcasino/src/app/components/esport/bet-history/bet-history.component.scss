@@ -1,0 +1,112 @@
+.bet-history-wrapper {
+  position: relative;
+  padding: 15px;
+  background: var(--gray-color);
+  border-radius: 10px;
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .close-btn {
+    cursor: pointer;
+    text-align: center;
+    position: absolute;
+    right: 15px;
+    top: 22px;
+    height: 24px;
+    width: 24px;
+    background: var(--white-color);
+    border-radius: 50%;
+  }
+
+  .bet-item {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background-color: var(--dark-gray-color);
+    cursor: pointer;
+
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+
+    .bet-item-visible-row {
+      display: grid;
+      text-align: center;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .bet-item-hidden-row {
+      text-align: center;
+      margin-top: 5px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+  }
+}
+
+.text-success {
+  color: var(--bs-success);
+  font-weight: 700;
+}
+
+.text-danger {
+  color: var(--bs-danger);
+  font-weight: 700;
+}
+
+.navigation-arrows {
+  display: flex;
+  margin-top: 15px;
+  color: var(--light-gray-color);
+  font-size: 24px;
+  font-weight: 700;
+
+  .arrow-btn {
+    cursor: default;
+    text-align: center;
+    height: 36px;
+    width: 50px;
+    background: var(--dark-gray-color);
+
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+      margin-right: 1px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+
+  .arrow-btn-active {
+    cursor: pointer;
+    color: var(--white-color);
+  }
+}
+
+.no-content-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  height: 50px;
+}
+
+@media (max-width: 1000px) {
+  .bet-item-visible-row {
+  }
+
+  .bet-item-hidden-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+}

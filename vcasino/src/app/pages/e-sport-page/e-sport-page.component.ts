@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {HeaderComponent} from "../../components/header/header.component";
 import {NgForOf, NgIf} from "@angular/common";
@@ -10,11 +10,16 @@ import {
   MatchOverviewSliderComponent
 } from "../../components/esport/match-overview-slider/match-overview-slider.component";
 import {BetInfoComponent} from "../../components/esport/bet-info/bet-info.component";
-import {IMarket} from "../../models/esport/IMarket";
 import {IMatch} from "../../models/esport/IMatch";
 import {ISelectedMarket} from "../../models/esport/ISelectedMarket";
 import {MatchesComponent} from "../../components/esport/matches/matches.component";
 import {MatchComponent} from "../../components/esport/match/match.component";
+import {environment} from "../../../environments/environment";
+import {WebSocketService} from "../../services/web-socket.service";
+import {IMarket} from "../../models/esport/IMarket";
+import {IMatchUpdate} from "../../models/esport/IMatchUpdate";
+import {WalletService} from "../../services/wallet.service";
+import {BetHistoryComponent} from "../../components/esport/bet-history/bet-history.component";
 
 @Component({
   selector: 'app-e-sport-page',
@@ -28,80 +33,139 @@ import {MatchComponent} from "../../components/esport/match/match.component";
     BetInfoComponent,
     NgForOf,
     MatchesComponent,
-    MatchComponent
+    MatchComponent,
+    BetHistoryComponent
   ],
   templateUrl: './e-sport-page.component.html',
   styleUrl: './e-sport-page.component.scss'
 })
-export class ESportPageComponent implements OnInit {
+export class ESportPageComponent implements OnInit, OnDestroy {
+  @ViewChild(BetInfoComponent) betInfoComponent!: BetInfoComponent;
+
   errorMessage: string = '';
   showBetInfoMobile: boolean = false;
 
-  tournaments: ITournament[] = [
-    {id: 1, image: 'esport/blast-bounty.webp', discipline: 'Counter-Strike', title: 'PGL Astana'},
-    {id: 2, image: 'esport/blast-bounty.webp', discipline: 'Counter-Strike', title: 'PGL Astana'},
-    {id: 3, image: 'esport/blast-bounty.webp', discipline: 'Counter-Strike', title: 'PGL Wallachia Season 34'},
-    {id: 4, image: 'esport/blast-bounty.webp', discipline: 'Dota 2', title: 'PGL Astana'},
-    {id: 5, image: 'esport/blast-bounty.webp', discipline: 'Dota 2', title: 'PGL Wallachia Season 34'}
-  ];
-
-  markets: IMarket[] = [
-    {id: 1, outcome: 1.0, outcomeStr: 'Spirit', odds: 2.50, oddsStr: '2.50', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 2, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.47, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 3, outcome: 1.0, outcomeStr: 'Spirit', odds: 2.50, oddsStr: '2.50', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 4, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.47, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 5, outcome: 1.0, outcomeStr: 'Spirit', odds: 2.50, oddsStr: '2.50', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 6, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.47, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 7, outcome: 1.0, outcomeStr: 'Spirit', odds: 2.50, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 8, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.47, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 9, outcome: 1.0, outcomeStr: 'Spirit', odds: 2.50, oddsStr: '2.50', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 10, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.47, oddsStr: '1.47', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 11, outcome: 1.0, outcomeStr: 'Spirit', odds: 3.50, oddsStr: '3.50', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-    {id: 12, outcome: 2.0, outcomeStr: 'Vitality', odds: 1.27, oddsStr: '1.27', closed: false, mapNumber: null, participant: null, type: 'WinnerMatch', description: 'Match Winner', oddsIncreased: undefined},
-  ]
-
-  matches: IMatch[] = [
-    {id: 1, tournament: this.tournaments[0], participant1: {name: 'Spirit', image: 'esport/Spirit.png'}, participant2: {name: 'Vitality', image: 'esport/Vitality.png'}, winnerMatchMarket1: this.markets[0], winnerMatchMarket2: this.markets[1], startDate: '2025-04-10T23:30:00'},
-    {id: 2, tournament: this.tournaments[0], participant1: {name: 'Spirit2', image: 'esport/Spirit.png'}, participant2: {name: 'Vitality', image: 'esport/Vitality.png'}, winnerMatchMarket1: this.markets[2], winnerMatchMarket2: this.markets[3], startDate: '2025-04-10T23:30:00'},
-    {id: 3, tournament: this.tournaments[1], participant1: {name: 'Vitality3', image: 'esport/Vitality.png'}, participant2: {name: 'Spirit', image: 'esport/Spirit.png'}, winnerMatchMarket1: this.markets[4], winnerMatchMarket2: this.markets[5], startDate: '2025-04-10T23:30:00'},
-    {id: 4, tournament: this.tournaments[1], participant1: {name: 'Spirit4', image: 'esport/Spirit.png'}, participant2: {name: 'Vitality', image: 'esport/Vitality.png'}, winnerMatchMarket1: this.markets[6], winnerMatchMarket2: this.markets[7], startDate: '2025-04-10T23:30:00'},
-    {id: 5, tournament: this.tournaments[3], participant1: {name: 'Spirit5', image: 'esport/Spirit.png'}, participant2: {name: 'Vitality', image: 'esport/Vitality.png'}, winnerMatchMarket1: this.markets[8], winnerMatchMarket2: this.markets[9], startDate: '2025-04-10T23:30:00'},
-    {id: 5, tournament: this.tournaments[4], participant1: {name: 'Spirit', image: 'esport/Spirit.png'}, participant2: {name: 'Vitality', image: 'esport/Vitality.png'}, winnerMatchMarket1: this.markets[10], winnerMatchMarket2: this.markets[11], startDate: '2025-04-10T23:30:00'}
-  ];
-
-  matchesByTitle: {title: string, matches: IMatch[]}[] = [];
+  matchesByTitle: { title: string, matches: IMatch[] }[] = [];
   selectedMarket: ISelectedMarket | null = null;
+  balance: number = 0;
+  formattedBalance: string = '0.00';
 
   selectedMatch: IMatch | null = null;
 
   showTournamentSidebar: boolean = false;
+  showBetHistory: boolean = false;
+
+  tournaments: ITournament[] = [];
+  matches: IMatch[] = [];
+
+  private marketsById: Map<number, IMarket> = new Map<number, IMarket>();
+  private matchDateIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private http: HttpService,
+    private webSocket: WebSocketService,
+    private walletService: WalletService,
     private errorService: ErrorService
   ) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
+    this.walletService.balance$.subscribe((updatedBalance: number) => {
+      this.balance = updatedBalance;
+      this.formattedBalance = this.balance.toFixed(2);
     });
+    this.errorService.error$.subscribe((message: string) => this.errorMessage = message);
   }
 
   ngOnInit() {
-    this.filterMatchesDefault();
+    this.webSocket.subscribeToMarketUpdates();
+    this.webSocket.matchUpdate$.subscribe((matchUpdate: IMatchUpdate) => {
+      this.handleMatchUpdate(matchUpdate);
+    })
+
+    this.http.get('/v1/bet/matches').then(
+      res => {
+        this.tournaments = res as ITournament[];
+        this.tournaments.forEach(t => {
+          t.image = environment.API_URL + '/v1/bet/images/' + t.image;
+
+          t.matches.forEach(m => {
+            m.tournament = t;
+            m.participant1.image = environment.API_URL + '/v1/bet/images/' + m.participant1.image;
+            m.participant2.image = environment.API_URL + '/v1/bet/images/' + m.participant2.image;
+            this.matches.push(m);
+            this.setMatchDate(m);
+
+            m.winnerMatchMarkets.markets.forEach(market => this.marketsById.set(market.id, market));
+          });
+        });
+
+        this.filterMatchesDefault();
+        this.webSocket.subscribeToMarketUpdates();
+
+        const now: Date = new Date();
+        const msUntilNextMinute: number = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+        setTimeout(() => {
+          this.matches.forEach(m => this.setMatchDate(m));
+
+          this.matchDateIntervalId = setInterval(() => {
+            this.matches.forEach(m => this.setMatchDate(m));
+          }, 60000);
+        }, msUntilNextMinute);
+
+      }, err => this.errorService.handleError(err));
+  }
+
+  ngOnDestroy() {
+    this.webSocket.unsubscribe();
+    if (this.matchDateIntervalId) clearInterval(this.matchDateIntervalId);
   }
 
   clearError() {
     this.errorMessage = '';
   }
 
+  private setMatchDate(match: IMatch): void {
+    const now: Date = new Date();
+    const matchDate: Date = new Date(match.startDate * 1000);
+
+    const diffInMs: number = matchDate.getTime() - now.getTime();
+    const diffInMinutes: number = Math.floor(diffInMs / 60000);
+    const diffInHours: number = Math.floor(diffInMinutes / 60);
+    const diffInRemainingMinutes: number = diffInMinutes % 60;
+
+    if (diffInMinutes <= 0) {
+      match.dateText = 'LIVE';
+      return;
+    }
+
+    if (diffInMinutes < 120) {
+      if (diffInHours < 1) {
+        match.dateText = `Live in ${diffInRemainingMinutes} min`
+      } else {
+        match.dateText = `Live in ${diffInHours}h ${diffInRemainingMinutes}min`;
+      }
+      return;
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    };
+
+    match.dateText = matchDate.toLocaleString('en-US', options).replace(',', '');
+  }
+
   filterMatchesDefault() {
     const group: { [discipline: string]: IMatch[] } = {};
 
-    for (const match of this.matches) {
-      if (!group[match.tournament.discipline]) {
-        group[match.tournament.discipline] = [];
+    this.tournaments.forEach(t => {
+      if (!group[t.discipline]) {
+        group[t.discipline] = [];
       }
-      group[match.tournament.discipline].push(match);
-    }
+      t.matches.forEach(m => group[t.discipline].push(m))
+    })
 
     this.matchesByTitle = Object.keys(group).map(key => ({
       title: key,
@@ -114,7 +178,8 @@ export class ESportPageComponent implements OnInit {
     if (tournament === null) {
       this.filterMatchesDefault();
     } else {
-      const tournamentMatches: IMatch[] = this.matches.filter(m => m.tournament.id === tournament.id);
+      const foundTournament: ITournament | undefined = this.tournaments.find(t => t.id === tournament.id);
+      const tournamentMatches: IMatch[] = foundTournament ? foundTournament.matches : [];
       this.matchesByTitle = [{title: `${tournament.discipline}. ${tournament.title}`, matches: tournamentMatches}];
     }
   }
@@ -124,7 +189,9 @@ export class ESportPageComponent implements OnInit {
     if (discipline === null) {
       this.filterMatchesDefault();
     } else {
-      const tournamentMatches: IMatch[] = this.matches.filter(m => m.tournament.discipline === discipline);
+      const tournamentMatches: IMatch[] = [];
+      this.tournaments.filter(t => t.discipline === discipline).forEach(
+        t => t.matches.forEach(m => tournamentMatches.push(m)));
       this.matchesByTitle = [{title: discipline, matches: tournamentMatches}];
     }
   }
@@ -144,5 +211,59 @@ export class ESportPageComponent implements OnInit {
 
   selectMarket(selectedMarket: ISelectedMarket | null) {
     this.selectedMarket = selectedMarket;
+  }
+
+  private handleMatchUpdate(matchUpdate: IMatchUpdate) {
+    if (matchUpdate.ended) {
+      this.matches = this.matches.filter(m => m.id !== matchUpdate.matchId);
+      this.matchesByTitle.forEach(i => {
+        i.matches = i.matches.filter(m => m.id !== matchUpdate.matchId);
+      });
+      if (this.selectedMatch !== null && this.selectedMatch.id === matchUpdate.matchId) {
+        this.selectMatch(null);
+      }
+      return;
+    }
+
+    if (matchUpdate.matchMaps !== null) {
+      const match: IMatch | undefined = this.matches.find(m => m.id === matchUpdate.matchId);
+      if (match) {
+        match.matchMaps = matchUpdate.matchMaps;
+      }
+    }
+
+    if (matchUpdate.winnerMatchMarkets !== null) {
+      this.updateWinnerMatchMarkets(matchUpdate.winnerMatchMarkets);
+    }
+  }
+
+  private updateWinnerMatchMarkets(markets: IMarket[]) {
+    markets.forEach(m => {
+      const existingMarket: IMarket | undefined = this.marketsById.get(m.id);
+      if (existingMarket) {
+        this.updateMarket({toUpdate: existingMarket, updateWith: m});
+      }
+    })
+  }
+
+  updateMarket(obj: { toUpdate: IMarket, updateWith: IMarket }) {
+    const oldOdds: number = obj.toUpdate.odds;
+    obj.toUpdate.odds = obj.updateWith.odds;
+    obj.toUpdate.closed = obj.updateWith.closed;
+
+    if (!obj.toUpdate.closed) {
+      obj.toUpdate.oddsIncreased = obj.toUpdate.odds > oldOdds;
+      setTimeout(() => {
+        obj.toUpdate.oddsIncreased = undefined;
+      }, 2000);
+    }
+
+    if (this.selectedMarket !== null && this.selectedMarket.market.id === obj.toUpdate.id) {
+      if (this.selectedMarket!.market.closed) {
+        this.selectMarket(null);
+      } else {
+        this.betInfoComponent.updatePossibleWin();
+      }
+    }
   }
 }

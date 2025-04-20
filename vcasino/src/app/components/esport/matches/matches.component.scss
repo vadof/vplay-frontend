@@ -12,6 +12,7 @@
 
     div:first-child {
       cursor: pointer;
+
       &:hover {
         text-decoration: underline;
         color: var(--yellow-color);
@@ -36,11 +37,30 @@
 
   .match-left {
     .match-date {
-      color: var(--light-gray-color);
+      .match-date-text {
+        color: var(--light-gray-color);
+      }
+
+      .match-date-live-text {
+        color: var(--white-color);
+        background: var(--bs-danger);
+        font-weight: 600;
+        padding: 0 2px;
+        height: 15px;
+        line-height: 15px;
+        margin-left: 5px;
+      }
     }
 
     .match-participants {
       margin-top: 5px;
+      display: flex;
+      align-items: center;
+
+      .match-participant {
+
+      }
+
       .dash {
         margin: 0 7px;
       }
@@ -51,15 +71,17 @@
     }
   }
 
-
-
   .match-right {
 
     .winner-market-row {
+      height: 100%;
+
       .winner-market {
+        height: 100%;
         cursor: pointer;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
         background: var(--dark-gray-color);
         padding: 5px 0;
@@ -91,10 +113,30 @@
         }
       }
 
+      .winner-market-closed:hover {
+        background: var(--dark-gray-color);
+        color: var(--white-color);
+      }
+
       .winner-market-selected {
         color: var(--dark-color);
         background: var(--yellow-color);
       }
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .match-participants {
+    flex-direction: column;
+    align-items: start !important;
+
+    .dash {
+      display: none;
+    }
+
+    .match-participant:first-child {
+      margin-bottom: 5px;
     }
   }
 }

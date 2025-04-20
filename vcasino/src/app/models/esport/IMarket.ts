@@ -8,6 +8,5 @@ export interface IMarket {
   mapNumber: number | null;
   participant: number | null;
   type: string;
-  description: string;
   oddsIncreased: boolean | undefined;
 }

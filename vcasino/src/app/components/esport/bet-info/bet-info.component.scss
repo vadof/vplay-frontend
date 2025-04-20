@@ -96,7 +96,7 @@
 
       .bet-content-main {
         position: relative;
-        margin: 5px;
+        margin: 5px 5px 0 5px;
         padding: 5px;
         background: var(--dark-gray-color);
       }
@@ -183,6 +183,16 @@
         }
       }
 
+      .bet-error-message {
+        text-align: center;
+        margin: 0 5px 5px 5px;
+        padding: 2px 0;
+        background: rgba(220, 53, 69, 0.7);
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        font-weight: 500;
+      }
+
       .bet-content-bottom {
         padding: 0 10px 10px 10px;
         color: var(--light-gray-color);
@@ -207,14 +217,6 @@
             color: var(--white-color);
             text-align: end;
           }
-        }
-
-        .place-bet-btn {
-          letter-spacing: 1px;
-          margin-top: 10px;
-          width: 100%;
-          font-size: 18px;
-          font-weight: 700;
         }
 
         .switch {
@@ -259,6 +261,99 @@
 
           input:checked + .slider:before {
             transform: translateX(23px);
+          }
+        }
+
+        .place-bet-btn {
+          margin-top: 10px;
+          position: relative;
+          overflow: hidden;
+          letter-spacing: 1px;
+          width: 100%;
+          font-size: 18px;
+          font-weight: 700;
+          z-index: 1;
+        }
+
+        .place-bet-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 0;
+          background-color: var(--yellow-color);
+          z-index: -1;
+          transition: width 3s ease-in-out;
+        }
+
+        .place-bet-btn.animate-fill::before {
+          animation: fillToFull 3.5s ease-in-out forwards;
+        }
+
+        @keyframes fillToFull {
+          0% {
+            width: 0;
+          }
+          75% {
+            width: 66%;
+          }
+          100% {
+            width: 100%;
+          }
+        }
+
+        .place-bet-btn.animate-fill {
+          background-color: var(--yellow-shadow);
+        }
+
+        .dots-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 27px;
+          width: 100%;
+
+          .dot {
+            height: 15px;
+            width: 15px;
+            margin-right: 10px;
+            border-radius: 10px;
+            background-color: var(--light-gray-color);
+            animation: pulse 1.5s infinite ease-in-out;
+
+            &:last-child {
+              margin-right: 0;
+            }
+
+            &:nth-child(1) {
+              animation-delay: -0.3s;
+            }
+
+            &:nth-child(2) {
+              animation-delay: -0.1s;
+            }
+
+            &:nth-child(3) {
+              animation-delay: 0.1s;
+            }
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(0.8);
+            background-color: var(--gray-color);
+          }
+
+          50% {
+            transform: scale(1.2);
+            background-color: var(--dark-gray-color);
+          }
+
+          100% {
+            transform: scale(0.8);
+            background-color: var(--gray-color);
           }
         }
       }
@@ -322,14 +417,14 @@ input[type=number] {
   .hidden {
     display: none !important;
   }
+}
 
-  .dark-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 2;
-  }
+.dark-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2;
 }

@@ -7,18 +7,53 @@
 
   <div class="match-header">
 
-    <div class="match-header-date">Apr 16 20:00</div>
-    <div class="match-header-participants">
-      <div class="header-participant header-participant1">
-        <div class="header-participant-name">{{ match.participant1.name }}</div>
-        <img [ngSrc]=" match.participant1.image" width="36" height="36" alt="">
+    <ng-container *ngIf="match.matchMaps.length === 0; else headerMaps">
+      <div class="match-header-top1">
+        <div class="match-header-date" [class.live-text]="match.dateText === 'LIVE'">
+          <div class="match-header-date-text">{{ match.dateText }}</div>
+        </div>
+        <div class="match-header-participants">
+          <div class="header-participant header-participant1">
+            <div class="header-participant-name">{{ match.participant1.name }}</div>
+            <img [ngSrc]=" match.participant1.image" width="36" height="36" alt="">
+          </div>
+          <span>VS</span>
+          <div class="header-participant header-participant2">
+            <img [ngSrc]=" match.participant2.image" width="36" height="36" alt="">
+            <div class="header-participant-name">{{ match.participant2.name }}</div>
+          </div>
+        </div>
       </div>
-      <span>VS</span>
-      <div class="header-participant header-participant2">
-        <img [ngSrc]=" match.participant2.image" width="36" height="36" alt="">
-        <div class="header-participant-name">{{ match.participant2.name }}</div>
+    </ng-container>
+    <ng-template #headerMaps>
+      <div class="match-header-top2">
+        <div class="match-header-date d-flex align-items-center">
+          <div class="match-header-date-text">Map {{ match.matchMaps.length }}</div>
+          <div class="match-header-date-live-text">LIVE</div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="match-header-participants">
+            <div class="header-participant header-participant1">
+              <img [ngSrc]=" match.participant1.image" width="24" height="24" alt="">
+              <div class="header-participant-name">{{ match.participant1.name }}</div>
+            </div>
+            <div class="header-participant header-participant2">
+              <img [ngSrc]=" match.participant2.image" width="24" height="24" alt="">
+              <div class="header-participant-name">{{ match.participant2.name }}</div>
+            </div>
+          </div>
+
+          <div class="match-header-maps">
+            <div class="match-header-map" *ngFor="let map of match.matchMaps">
+              <div class="score1">{{ map.score[0] }}</div>
+              <span class="map-number">Map {{ map.mapNumber }}</span>
+              <div class="score2">{{ map.score[1] }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </ng-template>
 
     <div class="horizontal-divider"></div>
 
@@ -36,27 +71,28 @@
 
   <div class="match-markets">
 
-    <div *ngFor="let item of marketsToShow" class="market-section">
-      <div class="market-section-title">{{ item.category }}</div>
+    <ng-container *ngIf="marketsToShow.length > 0; else noAvailableMarkets">
+      <div *ngFor="let item of marketsToShow" class="market-section">
+        <div class="market-section-title">{{ item.category }}</div>
 
-      <div *ngFor="let pair of item.marketPairs" class="market-pair">
-
-        <div class="market-pair-item" (click)="selectMarket(pair[0])"
-             [class.market-selected]="selectedMarket !== null && selectedMarket.market.id === pair[0].id"
-             [ngClass]="{'odds-effect-increase': pair[0].oddsIncreased === true, 'odds-effect-decrease' : pair[0].oddsIncreased === false }">
-          <div class="pair-item-outcome">{{ pair[0].outcomeStr }}</div>
-          <div class="pair-item-odds">{{ pair[0].oddsStr }}</div>
-        </div>
-        <div class="market-pair-item" (click)="selectMarket(pair[1])"
-             [class.market-selected]="selectedMarket !== null && selectedMarket.market.id === pair[1].id"
-             [ngClass]="{'odds-effect-increase': pair[1].oddsIncreased === true, 'odds-effect-decrease' : pair[1].oddsIncreased === false }">
-          <div class="pair-item-outcome">{{ pair[1].outcomeStr }}</div>
-          <div class="pair-item-odds">{{ pair[1].oddsStr }}</div>
-        </div>
+        <ng-container *ngFor="let pair of item.marketPairs" class="market-pair">
+          <div *ngIf="!pair.closed" class="market-pair">
+            <div *ngFor="let market of pair.markets" class="market-pair-item" (click)="selectMarket(market, item.category)"
+                 [class.market-selected]="selectedMarket !== null && selectedMarket.market.id === market.id"
+                 [ngClass]="{'odds-effect-increase': market.oddsIncreased === true, 'odds-effect-decrease' : market.oddsIncreased === false }">
+              <div class="pair-item-outcome">{{ market.outcomeStr }}</div>
+              <div class="pair-item-odds">{{ market.odds }}</div>
+            </div>
+          </div>
+        </ng-container>
 
       </div>
-
-    </div>
+    </ng-container>
+    <ng-template #noAvailableMarkets>
+      <div class="no-available-markets">
+        No available markets
+      </div>
+    </ng-template>
 
   </div>
 

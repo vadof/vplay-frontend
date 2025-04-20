@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {IMatch} from "../../../models/esport/IMatch";
 import {ISelectedMarket} from "../../../models/esport/ISelectedMarket";
 import {IMarket} from "../../../models/esport/IMarket";
-import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {ITournament} from "../../../models/esport/ITournament";
 
 @Component({
@@ -11,7 +11,8 @@ import {ITournament} from "../../../models/esport/ITournament";
   imports: [
     NgForOf,
     NgOptimizedImage,
-    NgClass
+    NgClass,
+    NgIf
   ],
   templateUrl: './matches.component.html',
   styleUrl: './matches.component.scss'
@@ -27,7 +28,7 @@ export class MatchesComponent {
     if (this.selectedMarket !== null && this.selectedMarket.market.id === market.id) {
       this.selectedMarket = null;
     } else {
-      this.selectedMarket = {market, match};
+      this.selectedMarket = {market, match, marketCategory: 'Match Winner'};
     }
     this.selectMarketEvent.emit(this.selectedMarket);
   }

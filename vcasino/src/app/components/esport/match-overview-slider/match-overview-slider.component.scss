@@ -112,5 +112,17 @@
     background: var(--yellow-color);
     color: var(--dark-color);
   }
+
+  .winner-market-closed:hover {
+    background: var(--dark-gray-color);
+    color: var(--white-color);
+  }
+}
+
+.live-text {
+  background: var(--bs-danger);
+  font-weight: 700;
+  padding: 0 5px;
+  border-radius: 5px;
 }
 

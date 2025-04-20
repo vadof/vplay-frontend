@@ -11,19 +11,18 @@
     <div class="container">
       <div class="header-items">
         <div class="header-item header-item-sports" (click)="toggleTournamentSidebar(true)">Sports</div>
-        <div class="header-item header-item-bets">My bets</div>
+        <div class="header-item header-item-bets" (click)="showBetHistory = true">My bets</div>
         <div class="header-item header-item-balance">
           <span>Balance</span>
-          <span>3.45</span>
+          <span>{{ formattedBalance }}</span>
         </div>
       </div>
     </div>
   </div>
 
   <div class="d-flex container">
-
     <!--  Left side-->
-    <app-tournament-sidebar [class.sidebar-visible]="showTournamentSidebar"
+    <app-tournament-sidebar *ngIf="tournaments.length > 0" [class.sidebar-visible]="showTournamentSidebar"
                             [tournaments]="tournaments"
                             (selectTournamentEvent)="filterMatchesByTournament($event)"
                             (selectDisciplineEvent)="filterMatchesByDiscipline($event)"
@@ -68,6 +67,7 @@
           [selectedMarket]="selectedMarket"
           (selectMarketEvent)="selectMarket($event)"
           (selectMatchEvent)="selectMatch($event)"
+          (updateMarketEvent)="updateMarket($event)"
         ></app-match>
       </div>
     </ng-template>
@@ -77,9 +77,18 @@
     <!--  Right side-->
     <app-bet-info
       [selectedMarket]="selectedMarket"
+      [balance]="balance"
       [opened]="showBetInfoMobile"
       (selectMarketEvent)="selectMarket($event)"
+      (showBetHistoryEvent)="showBetHistory = $event"
     ></app-bet-info>
     <!--  Right side-->
   </div>
+
 </div>
+
+<div *ngIf="showBetHistory" class="bet-history">
+  <app-bet-history (closeEvent)="showBetHistory = false"></app-bet-history>
+</div>
+
+<div *ngIf="showBetHistory" class="dark-bg" (click)="showBetHistory = false"></div>

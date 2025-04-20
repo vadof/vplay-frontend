@@ -1,7 +1,7 @@
 <div class="bet-info-wrapper" (click)="$event.stopPropagation()">
-  <div *ngIf="balance !== null" class="balance justify-content-between align-items-center">
+  <div class="balance justify-content-between align-items-center">
     <div>Balance</div>
-    <div>{{ balance }}</div>
+    <div>{{ formattedBalance }}</div>
   </div>
 
   <div class="bet-info-main">
@@ -11,7 +11,7 @@
         <div class="option1 text-center">
           Bet Slip
         </div>
-        <div (click)="showBets = true" class="option2 text-center">
+        <div (click)="showBetHistory()" class="option2 text-center">
           My bets
         </div>
       </div>
@@ -83,6 +83,10 @@
 
           </div>
 
+          <div *ngIf="betErrorMessage" class="bet-error-message">
+            {{ betErrorMessage }}
+          </div>
+
           <div class="bet-content-bottom">
 
             <div class="d-flex align-items-center justify-content-between">
@@ -106,11 +110,24 @@
             </div>
 
             <button class="place-bet-btn btn btn-primary-no-hover"
+                    [class.btn-disabled]="betAmount < 0.1 || betButtonState !== 0"
+                    [class.animate-fill]="betButtonState > 0"
                     (click)="placeBet()">
-              Place Bet</button>
+              <ng-container [ngSwitch]="true">
+                <ng-container *ngSwitchCase="betButtonState === 0">Place Bet</ng-container>
 
+                <ng-container *ngSwitchCase="betButtonState === 1">
+                  <section class="dots-container">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                  </section>
+                </ng-container>
+
+                <ng-container *ngIf="betButtonState === 2">&#10004; Done</ng-container>
+              </ng-container>
+            </button>
           </div>
-
 
         </div>
 
