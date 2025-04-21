@@ -1,0 +1,97 @@
+<app-header></app-header>
+<app-error-popup
+  *ngIf="errorMessage"
+  [errorMessage]="errorMessage"
+  (closeEvent)="clearError()">
+</app-error-popup>
+
+<div class="container">
+  <app-main-statistics *ngIf="statistics"
+                       [statistics]="statistics">
+  </app-main-statistics>
+
+  <div class="search mb-3 mt-3">
+    <h2 class="text-center">Search Wallet</h2>
+    <app-search class="d-flex justify-content-center"
+                [options]="searchOptions"
+                (searchEvent)="searchWallet($event)">
+    </app-search>
+    <div class="search-history mt-2">
+      <button class="btn"
+              *ngFor="let information of searchHistory"
+              [class]="currentWalletInformation?.id === information.id ? 'btn-primary-no-hover' : 'btn-gray'"
+              (click)="switchWalletInformationItem(information)">
+        Wallet#{{ information.id }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="currentWalletInformation" class="wallet-information-wrapper mb-4">
+    <h2 class="text-center mb-3">Wallet#{{ currentWalletInformation.id }}</h2>
+
+    <div class="wallet-information">
+
+      <div class="wallet-information-content">
+        <div *ngFor="let item of walletInformation" class="information-item">
+          <div class="statistics-item-label fw-bold">{{ item.label }}</div>
+          <div class="statistics-item-value">
+            <a
+              *ngIf="item.clickable; else normalText"
+              (click)="item.onClick?.()"
+              class="link"
+            >
+              {{ item.value }}
+            </a>
+            <ng-template #normalText>{{ item.value }}</ng-template>
+          </div>
+        </div>
+
+        <div class="transactions" *ngIf="currentWalletInformation.showTransactions">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3>Transactions</h3>
+            <button class="btn btn-primary-no-hover" (click)="currentWalletInformation!.showTransactions = false">Hide</button>
+          </div>
+
+          <div class="transaction-items">
+            <div class="transaction-item">
+              <strong>Created At</strong>
+              <strong>Type</strong>
+              <strong>Status</strong>
+              <strong>Payload</strong>
+            </div>
+            <div class="transaction-item" *ngFor="let transaction of currentWalletInformation.latestTransactions">
+              <span>{{ transaction.formattedDate }}</span>
+              <span>{{ transaction.type }}</span>
+              <span>{{ transaction.status }}</span>
+              <span>{{ transaction.payload }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="wallet-options">
+        <div class="wallet-option mb-4 add-vdollars">
+          <input class="form-control" type="number" [(ngModel)]="addDollarsValue" placeholder="Amount">
+          <button class="btn btn-primary" (click)="addVDollars()">Add VDollars</button>
+        </div>
+        <div class="wallet-option set-referral-bonus">
+          <input class="form-control" type="number" [(ngModel)]="referralBonus" placeholder="Amount">
+          <button class="btn btn-primary" (click)="setReferralBonus()">Set referral bonus</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="top10 mb-3">
+    <h2 class="mb-3 text-center">Top 10 Wallet By Balance</h2>
+    <div *ngFor="let wallet of topWallets"
+         (click)="fetchWalletStatistics(wallet.id)"
+         class="top10-item">
+      <div class="top10-username">Wallet#{{ wallet.id }}</div>
+      <div class="top10-net-worth">{{ wallet.balance }}</div>
+    </div>
+  </div>
+
+</div>
