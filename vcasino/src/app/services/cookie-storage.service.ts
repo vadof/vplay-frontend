@@ -9,6 +9,7 @@ const TOKEN_KEY: string = 'accessToken';
 const REFRESH_TOKEN_KEY: string = 'refreshToken';
 const USER_KEY: string = 'user';
 const TASK_KEY: string = 'task';
+const REFERRAL_KEY: string = 'ref';
 
 @Injectable({
   providedIn: 'root'
@@ -77,4 +78,11 @@ export class CookieStorage {
     this.cookieService.set(TASK_KEY, '', new Date(0), '/');
   }
 
+  public saveReferral(ref: string): void {
+    this.cookieService.set(REFERRAL_KEY, ref, undefined, '/');
+  }
+
+  public removeReferral(): void {
+    this.cookieService.set(REFERRAL_KEY, '', new Date(0), '/');
+  }
 }

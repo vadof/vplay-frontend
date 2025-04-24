@@ -26,6 +26,7 @@ export class LoginSuccessPageComponent implements OnInit {
 
       if (user.username) {
         this.storage.saveUser(user)
+        this.storage.removeReferral();
         this.router.navigate([''], {
           replaceUrl: true,
         });

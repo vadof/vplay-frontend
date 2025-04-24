@@ -78,6 +78,7 @@ export class ConfirmationPageComponent implements OnInit {
       })
 
     } else {
+      this.storage.removeReferral();
       this.router.navigate([''], {
         replaceUrl: true,
       });

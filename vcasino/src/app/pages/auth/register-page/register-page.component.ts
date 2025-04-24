@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
 import {CookieStorage} from "../../../services/cookie-storage.service";
 import {ErrorResponse} from "../../../models/auth/ErrorResponse";
@@ -56,10 +56,24 @@ export class RegisterPageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private storage: CookieStorage,
     private router: Router,
+    private route: ActivatedRoute
   ) {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      const ref: string | undefined = params['ref'];
+      if (ref) {
+        this.storage.saveReferral(ref);
+        const queryParams = { ...params };
+        delete queryParams['ref'];
+        this.router.navigate([], {
+          queryParams,
+          replaceUrl: true,
+        });
+      }
+    });
+
     this.storage.signOut(false);
   }
 
