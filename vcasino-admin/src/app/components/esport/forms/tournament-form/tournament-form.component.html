@@ -1,0 +1,79 @@
+<h2 class="text-center">Add tournament</h2>
+<form [formGroup]="tournamentForm" (ngSubmit)="addTournament()" class="text-color-primary">
+
+  <div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title" formControlName="title">
+    <div *ngIf="tournamentForm.controls['title']['invalid']
+                  && (tournamentForm.controls['title']['dirty'] || tournamentForm.controls['title']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="discipline" class="form-label">Discipline</label>
+    <input type="text" class="form-control" id="discipline" formControlName="discipline">
+    <div *ngIf="tournamentForm.controls['discipline']['invalid']
+                  && (tournamentForm.controls['discipline']['dirty'] || tournamentForm.controls['discipline']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3 image-input">
+    <label for="image" class="form-label">Image</label>
+    <div class="d-flex">
+      <input type="text" class="form-control no-right-border" id="image" formControlName="image">
+      <div class="btn btn-primary no-left-border get-btn" (click)="getExistingImages()">Get existing images</div>
+    </div>
+    <div *ngIf="tournamentForm.controls['image']['invalid']
+                  && (tournamentForm.controls['image']['dirty'] || tournamentForm.controls['image']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+
+    <div *ngIf="existingImages.length > 0" class="existing-images d-flex flex-column">
+      <div *ngFor="let image of existingImages" (click)="showImage(image)" class="d-flex align-items-center mt-2">
+        <div *ngIf="image.show">
+          <img [ngSrc]="image.url" width="24" height="24" alt="">
+        </div>
+        <div class="image-name link">{{ image.name }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mb-3">
+    <label for="tournamentPage" class="form-label">Tournament page</label>
+    <input type="text" class="form-control" id="tournamentPage" formControlName="tournamentPage">
+    <div *ngIf="tournamentForm.controls['tournamentPage']['invalid']
+                  && (tournamentForm.controls['tournamentPage']['dirty'] || tournamentForm.controls['tournamentPage']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="startDateTournament" class="form-label">Start Date</label>
+    <input type="date" class="form-control" id="startDateTournament" formControlName="startDate">
+    <div *ngIf="tournamentForm.controls['startDate']['invalid']
+                  && (tournamentForm.controls['startDate']['dirty'] || tournamentForm.controls['startDate']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="endDateTournament" class="form-label">End Date</label>
+    <input type="date" class="form-control" id="endDateTournament" formControlName="endDate">
+    <div *ngIf="tournamentForm.controls['endDate']['invalid']
+                  && (tournamentForm.controls['endDate']['dirty'] || tournamentForm.controls['endDate']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100 mt-2">Add Tournament</button>
+
+</form>

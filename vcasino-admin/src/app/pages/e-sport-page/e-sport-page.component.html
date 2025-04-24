@@ -1,0 +1,48 @@
+<app-header></app-header>
+<app-error-popup
+  *ngIf="errorMessage"
+  [errorMessage]="errorMessage"
+  (closeEvent)="clearError()">
+</app-error-popup>
+
+<div class="container">
+
+  <div class="secondary-header">
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'general'"
+         (click)="switchSection('general')">
+      General
+    </div>
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'tournaments'"
+         (click)="switchSection('tournaments')">
+      Tournaments
+    </div>
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'matches'"
+         (click)="switchSection('matches')">
+      Matches
+    </div>
+    <div class="secondary-header-item"
+         [class.header-item-active]="section === 'user'"
+         (click)="switchSection('user')">
+      User
+    </div>
+  </div>
+
+  <div [hidden]="!(section === 'general')">
+    <app-general-statistics></app-general-statistics>
+  </div>
+  <div [hidden]="!(section === 'tournaments')">
+    <app-tournament-statistics
+      (showTournamentMatchesEvent)="showTournamentMatches($event)"
+    ></app-tournament-statistics>
+  </div>
+  <div [hidden]="!(section === 'matches')">
+    <app-match-statistics [selectedTournamentId]="selectedTournamentId"></app-match-statistics>
+  </div>
+  <div [hidden]="!(section === 'user')">
+    <app-user-statistics></app-user-statistics>
+  </div>
+</div>
+

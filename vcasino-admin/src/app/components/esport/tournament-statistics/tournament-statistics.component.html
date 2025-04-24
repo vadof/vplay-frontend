@@ -1,0 +1,73 @@
+<div class="top-section d-flex"
+     [class.justify-content-end]="showTournamentForm || selectedTournamentForMatch !== null"
+     [class.justify-content-between]="!showTournamentForm && selectedTournamentForMatch === null">
+  <form *ngIf="!showTournamentForm && selectedTournamentForMatch === null" [formGroup]="filterForm" (ngSubmit)="getTournaments()" class="mb-3 filter-form">
+    <div class="start-date">
+      <label for="startDate" class="form-label">Start Date</label>
+      <input type="date" class="form-control no-right-border" id="startDate" formControlName="startDate">
+    </div>
+
+    <div class="end-date">
+      <label for="endDate" class="form-label no-right-border">End Date</label>
+      <input type="date" class="form-control" id="endDate" formControlName="endDate">
+    </div>
+
+    <div class="filter-btn">
+      <button type="submit" class="btn btn-primary no-left-border">Filter</button>
+    </div>
+  </form>
+
+  <div class="add-tournament-button">
+    <button *ngIf="!showTournamentForm && selectedTournamentForMatch === null"
+            (click)="showTournamentForm = true" class="btn btn-primary mb-3">
+      Add Tournament
+    </button>
+    <button *ngIf="showTournamentForm || selectedTournamentForMatch !== null"
+            (click)="showTournamentForm = false; selectedTournamentForMatch = null" class="btn btn-danger">
+      Close
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="show && !showTournamentForm && selectedTournamentForMatch === null" class="tournament-items mb-3">
+  <div (click)="item.showStats = !item.showStats" *ngFor="let item of tournaments" class="tournament-item">
+
+    <div class="d-flex justify-content-between align-items-center tournament-description">
+      <a class="d-flex align-items-center tournament-title link" [href]="item.tournament.page" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()">
+        <img [ngSrc]="item.tournament.image" width="36" height="36" alt="">
+        <div>{{ item.tournament.title }}. {{ item.tournament.discipline }}</div>
+      </a>
+
+      <div class="tournament-date d-flex">
+        <span>{{ item.tournament.startDate }}</span>
+        <span class="divider"> - </span>
+        <span>{{ item.tournament.endDate }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="item.showStats" class="tournament-stats mt-2" (click)="$event.stopPropagation()">
+      <div class="tournament-statistics-items">
+        <div class="statistics-item" *ngFor="let stat of item.stats">
+          <div class="statistics-item-title">{{ stat.label }}</div>
+          <div class="statistics-item-value">{{ stat.value }}</div>
+        </div>
+      </div>
+
+      <div class="match-buttons mt-2">
+        <button class="btn btn-primary-no-hover" (click)="openMatchForm(item.tournament)">Add match</button>
+        <button class="btn btn-primary-no-hover" (click)="goToMatches(item.tournament)">Go to Matches</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-tournament-form *ngIf="showTournamentForm"
+                     (tournamentAddedEvent)="onTournamentAdded($event)">
+</app-tournament-form>
+
+<app-match-form *ngIf="selectedTournamentForMatch"
+                [tournament]="selectedTournamentForMatch"
+                (matchAddedEvent)="handleMatchAddedEvent($event)">
+</app-match-form>

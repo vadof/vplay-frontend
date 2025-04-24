@@ -1,0 +1,98 @@
+<h2 class="text-center">Add match</h2>
+<form [formGroup]="matchForm" (ngSubmit)="addMatch()" class="text-color-primary">
+
+  <div class="mb-3">
+    <label for="matchPage" class="form-label">Match page link</label>
+    <input type="text" class="form-control" id="matchPage" formControlName="matchPage" placeholder="https://www.hltv.org/matches/">
+    <div *ngIf="matchForm.controls['matchPage']['invalid']
+                  && (matchForm.controls['matchPage']['dirty'] || matchForm.controls['matchPage']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3 participants">
+    <label class="form-label">Participants</label>
+    <div class="participant-inputs">
+      <div class="participant1">
+        <input type="text" class="form-control" id="participant1" formControlName="participant1" placeholder="Spirit">
+        <div *ngIf="matchForm.controls['participant1']['invalid']
+                  && (matchForm.controls['participant1']['dirty'] || matchForm.controls['participant1']['touched'])"
+             class="text-danger mt-2">
+          Required field
+        </div>
+      </div>
+      <div class="participant2">
+        <input type="text" class="form-control" id="participant2" formControlName="participant2" placeholder="Vitality">
+        <div *ngIf="matchForm.controls['participant2']['invalid']
+                  && (matchForm.controls['participant2']['dirty'] || matchForm.controls['participant2']['touched'])"
+             class="text-danger mt-2">
+          Required field
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="!showParticipantForm && !showParticipants; else participantForm">
+      <div class="participants-buttons">
+        <div class="btn btn-primary-no-hover" (click)="getParticipants()">Get participants</div>
+        <div class="btn btn-primary-no-hover" (click)="openParticipantForm()">Add participant</div>
+      </div>
+    </ng-container>
+    <ng-template #participantForm>
+      <div class="btn btn-danger w-100 mt-2" (click)="closeParticipantForm(null)">Close</div>
+    </ng-template>
+    <div *ngIf="showParticipants" class="participant-items">
+      <div *ngFor="let participant of participants" class="participant-item" (click)="selectParticipant(participant)">
+        {{ participant }}
+      </div>
+    </div>
+
+    <div *ngIf="showParticipantForm" class="participant-form-wrapper">
+      <app-participant-form [discipline]="tournament.discipline"
+      (participantAddedEvent)="closeParticipantForm($event)"></app-participant-form>
+    </div>
+  </div>
+
+  <div class="win-probability">
+    <label for="winProbability" class="form-label">Win Probability</label>
+    <div class="win-probability-slider mb-2">
+      <input
+        type="range"
+        id="winProbability"
+        formControlName="winProbability1"
+        min="10"
+        max="90"
+        step="1"
+        [style]="progressBackground"
+      />
+    </div>
+
+    <div class="win-probability-values d-flex justify-content-between">
+      <span>Participant 1: <strong>{{ matchForm.get('winProbability1')?.value }}%</strong></span>
+      <span>Participant 2: <strong>{{ 100 -matchForm.get('winProbability1')?.value }}%</strong></span>
+    </div>
+
+  </div>
+
+  <div class="mb-3">
+    <label for="format" class="form-label">Format</label>
+    <input type="text" class="form-control" id="format" formControlName="format">
+    <div *ngIf="matchForm.controls['format']['invalid']
+                  && (matchForm.controls['format']['dirty'] || matchForm.controls['format']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="startDate" class="form-label">Start Date</label>
+    <input type="text" class="form-control" id="startDate" formControlName="startDate" placeholder="YYYY-MM-DD HH:MM:SS">
+    <div *ngIf="matchForm.controls['startDate']['invalid']
+                  && (matchForm.controls['startDate']['dirty'] || matchForm.controls['startDate']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100 mt-2">Add Match</button>
+
+</form>

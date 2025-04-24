@@ -1,0 +1,50 @@
+<h2 class="text-center">Add participant</h2>
+<form [formGroup]="participantForm" (ngSubmit)="addParticipant()" class="text-color-primary w-100">
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control" id="name" formControlName="name">
+    <div *ngIf="participantForm.controls['name']['invalid']
+                  && (participantForm.controls['name']['dirty'] || participantForm.controls['name']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <div class="mb-3 image-input">
+    <label for="image" class="form-label">Image</label>
+    <div class="d-flex">
+      <input type="text" class="form-control no-right-border" id="image" formControlName="image">
+      <div *ngIf="!showImages" class="btn btn-primary-no-hover no-left-border get-btn" (click)="getExistingImages()">Get existing images</div>
+      <div *ngIf="showImages" class="btn btn-danger no-left-border get-btn" (click)="showImages = false">Hide</div>
+    </div>
+    <div *ngIf="participantForm.controls['image']['invalid']
+                  && (participantForm.controls['image']['dirty'] || participantForm.controls['image']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+
+    <div *ngIf="showImages" class="existing-images d-flex flex-column">
+      <div *ngFor="let image of existingImages" (click)="showImage(image)" class="d-flex align-items-center mt-2">
+        <div *ngIf="image.show">
+          <img [ngSrc]="image.url" width="24" height="24" alt="">
+        </div>
+        <div class="image-name link">{{ image.name }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mb-3">
+    <label for="participantPage" class="form-label">Participant page</label>
+    <input type="text" class="form-control" id="participantPage" formControlName="participantPage">
+    <div *ngIf="participantForm.controls['participantPage']['invalid']
+                  && (participantForm.controls['participantPage']['dirty'] || participantForm.controls['participantPage']['touched'])"
+         class="text-danger mt-2">
+      Required field
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary-no-hover w-100 mt-2">Add Participant</button>
+
+</form>

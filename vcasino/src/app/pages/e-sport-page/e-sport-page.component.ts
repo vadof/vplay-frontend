@@ -39,6 +39,7 @@ import {BetHistoryComponent} from "../../components/esport/bet-history/bet-histo
   templateUrl: './e-sport-page.component.html',
   styleUrl: './e-sport-page.component.scss'
 })
+// TODO check for UTC date
 export class ESportPageComponent implements OnInit, OnDestroy {
   @ViewChild(BetInfoComponent) betInfoComponent!: BetInfoComponent;
 

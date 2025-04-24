@@ -7,7 +7,8 @@
 
 <div class="container">
   <app-main-statistics *ngIf="statistics"
-                       [statistics]="statistics">
+                       [statistics]="statistics"
+                       [formatValues]="true">
   </app-main-statistics>
 
   <div class="search mb-3 mt-3">
@@ -49,7 +50,8 @@
         <div class="transactions" *ngIf="currentWalletInformation.showTransactions">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h3>Transactions</h3>
-            <button class="btn btn-primary-no-hover" (click)="currentWalletInformation!.showTransactions = false">Hide</button>
+            <button class="btn btn-primary-no-hover" (click)="currentWalletInformation!.showTransactions = false">Hide
+            </button>
           </div>
 
           <div class="transaction-items">

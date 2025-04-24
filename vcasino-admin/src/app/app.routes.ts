@@ -5,6 +5,7 @@ import {authGuard} from "./helpers/auth/auth.guard";
 import {MainPageComponent} from "./pages/main-page/main-page.component";
 import {ClickerPageComponent} from "./pages/clicker-page/clicker-page.component";
 import {WalletPageComponent} from "./pages/wallet-page/wallet-page.component";
+import {ESportPageComponent} from "./pages/e-sport-page/e-sport-page.component";
 
 export const routes: Routes = [
   {path: 'error', component: ErrorPageComponent},
@@ -12,4 +13,5 @@ export const routes: Routes = [
   {path: '', component: MainPageComponent, canActivate: [authGuard]},
   {path: 'clicker', component: ClickerPageComponent, canActivate: [authGuard]},
   {path: 'wallet', component: WalletPageComponent, canActivate: [authGuard]},
+  {path: 'esport', component: ESportPageComponent, canActivate: [authGuard]},
 ];

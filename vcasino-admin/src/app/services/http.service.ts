@@ -18,8 +18,8 @@ export class HttpService {
     return firstValueFrom(this.http.get(environment.API_URL + url, this.getHeaders()));
   }
 
-  public async post(url: string, body: any) {
-    return firstValueFrom(this.http.post(environment.API_URL + url, body, this.getHeaders()));
+  public async post(url: string, body: any, contentType: string | null = 'application/json') {
+    return firstValueFrom(this.http.post(environment.API_URL + url, body, this.getHeaders(contentType)));
   }
 
   public async patch(url: string, body: any) {
@@ -34,11 +34,13 @@ export class HttpService {
     return firstValueFrom(this.http.delete(environment.API_URL + url, this.getHeaders()));
   }
 
-  private getHeaders() {
-    const token = this.storage.getToken();
-    const headersConfig: { [key: string]: string } = {
-      'Content-Type': 'application/json',
-    };
+  private getHeaders(contentType: string | null = 'application/json') {
+    const token: string | null = this.storage.getToken();
+    const headersConfig: { [key: string]: string } = {};
+
+    if (contentType) {
+      headersConfig['Content-Type'] = contentType;
+    }
 
     if (token) {
       headersConfig['Authorization'] = `Bearer ${token}`;

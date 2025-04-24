@@ -1,0 +1,98 @@
+<div class="search mb-3 mt-3">
+  <h2 class="text-center">Search User</h2>
+  <app-search class="d-flex justify-content-center"
+              [options]="searchOptions"
+              (searchEvent)="searchUser($event)">
+  </app-search>
+  <div class="search-history mt-2">
+    <button class="btn"
+            *ngFor="let information of searchHistory"
+            [class]="currentUserInformation?.userId === information.userId ? 'btn-primary-no-hover' : 'btn-gray'"
+            (click)="switchUserInformationItem(information)">
+      User#{{ information.userId }}
+    </button>
+  </div>
+</div>
+
+<div *ngIf="currentUserInformation" class="user-information-wrapper mb-4">
+  <h2 class="text-center mb-3">User#{{ currentUserInformation.userId }}</h2>
+
+  <div class="user-information">
+
+    <div class="information-item">
+      <div class="information-item-label">Bets placed:</div>
+      <div class="statistics-item-value">{{ currentUserInformation.totalBetsPlaced }}</div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">
+        <span class="text-win">W</span>
+        <span> / </span>
+        <span class="text-cancelled">C</span>
+        <span> / </span>
+        <span class="text-loss">L</span>
+        <span> Bets:</span>
+      </div>
+      <div class="statistics-item-value">
+        <span class="text-win">{{ currentUserInformation.totalWinBets }}</span>
+        <span> / </span>
+        <span class="text-cancelled">{{ currentUserInformation.totalCancelledBets }}</span>
+        <span> / </span>
+        <span class="text-loss">{{ currentUserInformation.totalLossBets }}</span>
+      </div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">Total Wagered:</div>
+      <div class="statistics-item-value">{{ currentUserInformation.totalAmountWagered }}</div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">
+        <span class="text-win">Win</span>
+        <span> / </span>
+        <span class="text-loss">Loss</span>
+        <span> Amount:</span>
+      </div>
+      <div class="statistics-item-value">
+        <span class="text-win">{{ currentUserInformation.totalWinAmount }}</span>
+        <span> / </span>
+        <span class="text-loss">{{ currentUserInformation.totalLossAmount }}</span>
+      </div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">Matches Participated:</div>
+      <div class="statistics-item-value">{{ currentUserInformation.totalMatchesParticipated }}</div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">Tournaments Participated:</div>
+      <div class="statistics-item-value">{{ currentUserInformation.totalTournamentsParticipated }}</div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">Win Percentage:</div>
+      <div class="statistics-item-value"
+           [class.text-win]="currentUserInformation.winPercentage > 50"
+           [class.text-loss]="currentUserInformation.winPercentage < 50">
+        {{ currentUserInformation.winPercentage }}%
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="top10 mb-3">
+  <h2 class="mb-3 text-center">Top 10 Players</h2>
+  <div *ngFor="let player of topPlayers"
+       (click)="fetchUserStatistics(player.userId)"
+       class="top10-item d-flex justify-content-between align-items-center">
+    <div class="top10-username">User#{{ player.userId }}</div>
+
+    <div class="top10-value-item text-center">
+      <div class="top10-label">Total Win</div>
+      <div class="top10-value text-win">{{ player.totalWinAmount }}</div>
+    </div>
+
+    <div class="top10-value-item text-center">
+      <div class="top10-label">Total Loss</div>
+      <div class="top10-value text-loss">{{ player.totalLossAmount }}</div>
+    </div>
+
+  </div>
+</div>

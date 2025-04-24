@@ -1,0 +1,81 @@
+.participants {
+  .participant-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .participants-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: .5rem;
+  }
+
+  .participant-items {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    .participant-item {
+      cursor: pointer;
+      background: var(--gray-color);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+
+      &:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.win-probability-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 13px;
+    border-radius: 6px;
+    outline: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--bs-success);
+    cursor: pointer;
+    -webkit-transition: background .15s ease-in-out;
+    transition: background .15s ease-in-out;
+  }
+
+  input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bs-success);
+    -webkit-transition: background .15s ease-in-out;
+    transition: background .15s ease-in-out;
+  }
+
+  input::-moz-focus-inner, input::-moz-focus-outer {
+    border: 0;
+  }
+}
+
+.participant-form-wrapper {
+  margin: 10px 0;
+  padding: 10px;
+  background: var(--gray-color);
+  border-radius: 5px;
+}

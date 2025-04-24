@@ -1,0 +1,190 @@
+<div class="mb-3 filter-form">
+  <div class="start-date">
+    <label for="startDate" class="form-label">Start Date</label>
+    <input type="text" class="form-control no-right-border" id="startDate" [(ngModel)]="startDate" placeholder="YYYY-MM-DD HH:MM:SS">
+  </div>
+
+  <div class="end-date">
+    <label for="endDate" class="form-label no-right-border">End Date</label>
+    <input type="text" class="form-control" id="endDate" [(ngModel)]="endDate" placeholder="YYYY-MM-DD HH:MM:SS">
+  </div>
+
+  <div class="filter-btn">
+    <button (click)="getMatches(null)" class="btn btn-primary no-left-border">Filter</button>
+  </div>
+</div>
+
+<div *ngIf="show" class="match-items mb-3">
+  <div *ngFor="let item of matchStatistics" class="match-item">
+
+    <div class="match-item-main">
+      <div class="match-info" (click)="$event.stopPropagation()">
+        <div class="match-participants">
+          <a class="link" [href]="item.matchPage" target="_blank" rel="noopener noreferrer">
+            {{ item.participant1Name }} <span class="win-probability">({{ item.winProbability1 }}%)</span>
+            <span> - </span>
+            {{ item.participant2Name }} <span class="win-probability">({{ item.winProbability2 }}%)</span>
+          </a>
+        </div>
+
+        <div class="match-tournament">
+          <a class="link" [href]="item.tournamentPage" target="_blank" rel="noopener noreferrer">
+            {{ item.tournamentTitle }}. {{ item.discipline }}
+          </a>
+        </div>
+      </div>
+
+      <div class="match-details">
+        <div class="match-start-date">
+          Start Date: {{ item.startDate }}
+        </div>
+
+        <div class="match-status">
+          <ng-container *ngIf="item.winner === null; else winner">
+            Status: {{ item.status }}
+          </ng-container>
+          <ng-template #winner>
+            Winner: {{ item.winner === 1 ? item.participant1Name : item.participant2Name }}
+          </ng-template>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!item.showStatistics; else closeStatistics" class="toggle-btn">
+        <button class="btn btn-primary-no-hover toggle-button" (click)="item.showStatistics = true">Show more</button>
+      </ng-container>
+      <ng-template #closeStatistics>
+        <button class="btn btn-danger toggle-button" (click)="item.showStatistics = false">Close</button>
+      </ng-template>
+    </div>
+
+    <div *ngIf="item.showStatistics" class="match-stats">
+      <div class="statistics-items">
+        <div class="statistics-item">
+          <div class="statistics-item-title">Total Bets</div>
+          <div class="statistics-item-value">{{ item.additionalStatistics.betCount }}</div>
+        </div>
+        <div class="statistics-item">
+          <div class="statistics-item-title">
+            Total Bets
+            <span class="text-success">W</span>
+            /
+            <span class="text-light-gray">C</span>
+            /
+            <span class="text-danger">L</span>
+          </div>
+          <div class="statistics-item-value">
+            <span class="text-success">{{ item.additionalStatistics.totalWinBets }}</span>
+            /
+            <span class="text-light-gray">{{ item.additionalStatistics.totalCancelledBets }}</span>
+            /
+            <span class="text-danger">{{ item.additionalStatistics.totalLossBets }}</span>
+          </div>
+        </div>
+        <div class="statistics-item">
+          <div class="statistics-item-title">Amount wagered</div>
+          <div class="statistics-item-value">{{ item.additionalStatistics.totalAmountWagered }}</div>
+        </div>
+        <div class="statistics-item">
+          <div class="statistics-item-title">Win/Loss amount</div>
+          <div class="statistics-item-value">
+            <span class="text-success">{{ item.additionalStatistics.totalAmountWin }}</span>
+            /
+            <span class="text-danger">{{ item.additionalStatistics.totalAmountLoss }}</span>
+          </div>
+        </div>
+        <div class="statistics-item">
+          <div class="statistics-item-title">Profit</div>
+          <div class="statistics-item-value">
+          <span [ngClass]="item.additionalStatistics.profit > 0 ? 'text-success': 'text-danger'">
+            {{ item.additionalStatistics.profit }}
+          </span>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!item.showMarkets; else showMarketsTemplate">
+        <div class="markets-button mt-2">
+          <button class="btn btn-primary-no-hover w-100" (click)="showMarkets(item)">Show markets</button>
+        </div>
+      </ng-container>
+      <ng-template #showMarketsTemplate>
+        <div class="two-market-buttons mt-2">
+          <button class="btn btn-primary-no-hover" (click)="reloadMarkets(item)">Reload</button>
+          <button class="btn btn-danger" (click)="item.showMarkets = false">Close</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="match-markets" *ngIf="item.marketsByCategory !== undefined && item.showMarkets && item.showStatistics">
+      <div class="markets-legend">
+        <div class="legend-item bg-win" (click)="goToEditMode('WIN')">
+          <span class="legend-description">Result: Win</span>
+          <strong class="legend-edit-enabled" *ngIf="editMode === 'WIN'">- Edit ON</strong>
+        </div>
+        <div class="legend-item bg-cancelled" (click)="goToEditMode('CANCELLED')">
+          <span class="legend-description">Result: Cancelled</span>
+          <strong class="legend-edit-enabled" *ngIf="editMode === 'CANCELLED'">- Edit ON</strong>
+        </div>
+        <div class="legend-item bg-loss" (click)="goToEditMode('LOSS')">
+          <span class="legend-description">Result: Loss</span>
+          <strong class="legend-edit-enabled" *ngIf="editMode === 'LOSS'">- Edit ON</strong>
+        </div>
+        <div class="legend-item">
+          <strong>&#10004;&nbsp;</strong>
+          <span class="legend-description">Market closed</span>
+        </div>
+      </div>
+
+      <div *ngFor="let item of item.marketsByCategory" class="market-section">
+        <div class="market-section-title">{{ item.category }}</div>
+
+        <div *ngFor="let pair of item.marketPairs" class="market-pair">
+          <div *ngFor="let market of pair" class="market-pair-item"
+               [ngClass]="{
+               'bg-win': market.result === 'WIN',
+               'bg-loss': market.result === 'LOSS',
+               'bg-cancelled': market.result === 'CANCELLED',
+               'cursor-pointer': market.result === null && editMode !== undefined
+               }"
+               (click)="setMarketResult(pair, market)"
+          >
+
+            <div class="pair-item-outcome">{{ market.outcome }} <span *ngIf="market.closed">&#10004;</span></div>
+
+            <div class="pair-item-bet-info">
+              <div class="pair-item-bet-info-item">
+                <div class="bet-info-title">Total Wagered</div>
+                <div class="bet-info-value">{{ market.totalAmountWagered }}</div>
+              </div>
+              <ng-container *ngIf="market.result === 'WIN'">
+                <div class="pair-item-bet-info-item">
+                  <div class="bet-info-title">Total Win</div>
+                  <div class="bet-info-value">{{ market.totalAmountWin }}</div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="market.result === 'LOSS'">
+                <div class="pair-item-bet-info-item">
+                  <div class="bet-info-title">Total Loss</div>
+                  <div class="bet-info-value">{{ market.totalAmountLoss }}</div>
+                </div>
+              </ng-container>
+              <div class="pair-item-bet-info-item">
+                <div class="bet-info-title">Avg/Max Bet Amount</div>
+                <div class="bet-info-value">{{ market.averageBetAmount }}/{{ market.maxBetAmount }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="save-reset-buttons" *ngIf="marketWinIds.length > 0 || marketCancelledIds.length > 0">
+        <button class="btn btn-danger" (click)="resetMarketChanges()">Reset changes</button>
+        <button class="btn btn-success" (click)="saveMarketChanges()">Save changes</button>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
