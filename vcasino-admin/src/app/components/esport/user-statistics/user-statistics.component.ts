@@ -37,7 +37,6 @@ export class UserStatisticsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("HAHAHA")
     this.http.get('/v1/bet/admin/statistics/users/top').then(
       res => this.topPlayers = res as ITopPlayer[],
       err => this.errorService.handleError(err)

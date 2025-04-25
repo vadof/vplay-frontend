@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {RouterLink} from "@angular/router";
@@ -24,7 +24,7 @@ import {ParticipantFormComponent} from "../participant-form/participant-form.com
   templateUrl: './match-form.component.html',
   styleUrl: './match-form.component.scss'
 })
-export class MatchFormComponent {
+export class MatchFormComponent implements OnInit {
   @Input({required: true}) tournament!: ITournament;
   @Output() matchAddedEvent: EventEmitter<ITournament> = new EventEmitter<ITournament>();
 
@@ -34,8 +34,7 @@ export class MatchFormComponent {
 
   private setNameForFirst: boolean = true;
 
-  constructor(private http: HttpService, private errorService: ErrorService) {
-  }
+  sliderValues: {wp1: number; wp2: number; odds1: string; odds2: string} = {wp1: 50, wp2: 50, odds1: "1.90", odds2: "1.90"};
 
   matchForm: FormGroup = new FormGroup({
     matchPage: new FormControl<string>('', Validators.required),
@@ -45,6 +44,25 @@ export class MatchFormComponent {
     winProbability1: new FormControl<number>(50, Validators.required),
     startDate: new FormControl<string>('', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)])
   });
+
+  constructor(private http: HttpService, private errorService: ErrorService) {
+  }
+
+  ngOnInit(): void {
+    this.matchForm.get('winProbability1')?.valueChanges.subscribe(value => {
+      this.sliderValues.wp1 = value;
+      this.sliderValues.wp2 = 100 - value;
+
+      this.sliderValues.odds1 = this.probabilityToOdds(this.sliderValues.wp1);
+      this.sliderValues.odds2 = this.probabilityToOdds(this.sliderValues.wp2);
+    });
+  }
+
+  private probabilityToOdds(prob: number): string {
+    const adjustedProb: number = prob / (100 * (1 - 0.05));
+    const odds: number = 1 / adjustedProb;
+    return odds.toFixed(2);
+  }
 
   get progressBackground(): string {
     const value: number = this.matchForm.value.winProbability1 as number;

@@ -11,7 +11,7 @@ export interface IUserInformation {
   totalLossAmount: number;
   biggestBet: number;
   smallestBet: number;
-  avgBet: number;
+  averageBet: number;
   totalTournamentsParticipated: number;
   totalMatchesParticipated: number;
   winPercentage: number;

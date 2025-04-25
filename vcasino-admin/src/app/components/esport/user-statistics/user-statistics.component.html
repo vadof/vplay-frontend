@@ -17,8 +17,7 @@
 <div *ngIf="currentUserInformation" class="user-information-wrapper mb-4">
   <h2 class="text-center mb-3">User#{{ currentUserInformation.userId }}</h2>
 
-  <div class="user-information">
-
+  <div class="user-information-items">
     <div class="information-item">
       <div class="information-item-label">Bets placed:</div>
       <div class="statistics-item-value">{{ currentUserInformation.totalBetsPlaced }}</div>
@@ -38,6 +37,18 @@
         <span class="text-cancelled">{{ currentUserInformation.totalCancelledBets }}</span>
         <span> / </span>
         <span class="text-loss">{{ currentUserInformation.totalLossBets }}</span>
+      </div>
+    </div>
+    <div class="information-item">
+      <div class="information-item-label">
+        <span>Smallest/Avg/Biggest Bet</span>
+      </div>
+      <div class="statistics-item-value">
+        <span>{{ currentUserInformation.smallestBet }}</span>
+        <span> / </span>
+        <span>{{ currentUserInformation.averageBet }}</span>
+        <span> / </span>
+        <span>{{ currentUserInformation.biggestBet }}</span>
       </div>
     </div>
     <div class="information-item">
@@ -73,8 +84,38 @@
         {{ currentUserInformation.winPercentage }}%
       </div>
     </div>
-
   </div>
+
+  <h3 class="text-center mb-3 mt-2">Latest Bets</h3>
+  <ng-container *ngIf="currentUserInformation.latestBets.length > 0; else noBets">
+    <div class="latest-bets">
+      <div *ngFor="let bet of currentUserInformation.latestBets"
+           class="bet-item align-items-center"
+           [class.bet-item-win]="bet.betResult === 'WIN'"
+           [class.bet-item-loss]="bet.betResult === 'LOSS'">
+        <div class="bet-item-match">{{ bet.matchDescription }}</div>
+
+        <div class="bet-item-value-item text-center">
+          <div class="bet-item-label fw-bold">Market</div>
+          <div class="bet-item-value">{{ bet.marketOutcome }}</div>
+        </div>
+
+        <div class="bet-item-value-item text-center">
+          <div class="bet-item-label">Bet Amount</div>
+          <div class="bet-item-value fw-bold">{{ bet.betAmount }}</div>
+        </div>
+
+        <div class="bet-item-value-item text-center">
+          <div class="bet-item-label">Created At</div>
+          <div class="bet-item-value fw-bold">{{ bet.createdAt }}</div>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noBets>
+    <strong class="text-center">No bets found</strong>
+  </ng-template>
 </div>
 
 <div class="top10 mb-3">

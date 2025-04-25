@@ -67,8 +67,8 @@
     </div>
 
     <div class="win-probability-values d-flex justify-content-between">
-      <span>Participant 1: <strong>{{ matchForm.get('winProbability1')?.value }}%</strong></span>
-      <span>Participant 2: <strong>{{ 100 -matchForm.get('winProbability1')?.value }}%</strong></span>
+      <span>Participant 1: <strong>{{ sliderValues.wp1 }}% ({{ sliderValues.odds1 }})</strong></span>
+      <span>Participant 2: <strong>{{ sliderValues.wp2 }}% ({{ sliderValues.odds2 }})</strong></span>
     </div>
 
   </div>

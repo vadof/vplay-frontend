@@ -1,12 +1,8 @@
 export interface IUserBet {
-  odds: number;
-  amount: number;
+  betOdds: number;
+  betAmount: number;
   createdAt: string;
-  result: string;
-  outcome: number;
-  marketType: string;
-  participant1Name: string;
-  participant2Name: string;
-  tournamentTitle: string;
-  discipline: string;
+  betResult: string;
+  marketOutcome: string;
+  matchDescription: string;
 }

@@ -10,7 +10,7 @@
   }
 }
 
-.user-information {
+.user-information-items {
   .information-item {
     display: flex;
     justify-content: space-between;
@@ -50,6 +50,29 @@
   }
 }
 
+.latest-bets {
+
+  .bet-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    background: var(--gray-color);
+    padding: 10px;
+    border-radius: 10px;
+
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+
+  .bet-item-win {
+    background: var(--bs-success);
+  }
+
+  .bet-item-loss {
+    background: var(--bs-danger);
+  }
+}
+
 .text-win {
   color: var(--bs-success) !important;
   font-weight: 700;
@@ -67,7 +90,7 @@
 
 
 @media (max-width: 1199px) {
-  .user-information {
+  .user-information-items {
     grid-template-columns: repeat(1, 1fr);
     gap: 0;
 
