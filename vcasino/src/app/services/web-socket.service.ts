@@ -10,7 +10,7 @@ import {IMatchUpdate} from "../models/esport/IMatchUpdate";
 })
 export class WebSocketService {
   private stompClient: Client | null = null;
-  private readonly wsUrl: string = 'ws:' + environment.API_URL.substring(environment.API_URL.indexOf('//')) + '/v1/bet/ws';
+  private readonly wsUrl: string = environment.BET_WEBSOCKET_URL;
 
   private matchUpdateSubject: Subject<IMatchUpdate> = new Subject<IMatchUpdate>();
   matchUpdate$: Observable<IMatchUpdate> = this.matchUpdateSubject.asObservable();

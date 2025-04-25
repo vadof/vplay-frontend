@@ -12,7 +12,7 @@ import {ESportPageComponent} from "./pages/e-sport-page/e-sport-page.component";
 export const routes: Routes = [
   {path: 'error', component: ErrorPageComponent},
   {path: 'login', component: LoginPageComponent},
-  {path: 'login/success', component: LoginSuccessPageComponent},
+  {path: 'authentication/success', component: LoginSuccessPageComponent},
   {path: 'register', component: RegisterPageComponent},
   {path: 'register/confirmation', component: ConfirmationPageComponent},
   {path: '', component: MainPageComponent},
