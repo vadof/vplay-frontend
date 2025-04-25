@@ -7,6 +7,7 @@ import {IMarketsByCategory} from "../../../models/esport/IMarketsByCategory";
 import {HttpService} from "../../../services/http.service";
 import {ErrorService} from "../../../services/error.service";
 import {WebSocketService} from "../../../services/web-socket.service";
+import {IMarketPair} from "../../../models/esport/IMarketPair";
 
 @Component({
   selector: 'app-match',
@@ -25,9 +26,10 @@ export class MatchComponent implements OnInit, OnDestroy {
   @Input({required: true}) selectedMarket: ISelectedMarket | null = null;
   @Output() selectMarketEvent: EventEmitter<ISelectedMarket | null> = new EventEmitter<ISelectedMarket | null>;
   @Output() selectMatchEvent: EventEmitter<null> = new EventEmitter<null>;
-  @Output() updateMarketEvent: EventEmitter<{ toUpdate: IMarket, updateWith: IMarket }> = new EventEmitter<{
+  @Output() updateMarketEvent: EventEmitter<{ toUpdate: IMarket, updateWith: IMarket, pair: IMarketPair }> = new EventEmitter<{
     toUpdate: IMarket,
-    updateWith: IMarket
+    updateWith: IMarket,
+    pair: IMarketPair
   }>;
 
   marketCategories: string[] = ['All markets', 'Winner', 'Total', 'Handicap'];
@@ -36,7 +38,7 @@ export class MatchComponent implements OnInit, OnDestroy {
 
   marketsByCategory: IMarketsByCategory[] = [];
   marketsToShow: IMarketsByCategory[] = [];
-  private marketsById: Map<number, IMarket> = new Map<number, IMarket>();
+  private marketPairsById: Map<number, IMarketPair> = new Map<number, IMarketPair>();
 
   constructor(private http: HttpService,
               private webSocket: WebSocketService,
@@ -51,7 +53,7 @@ export class MatchComponent implements OnInit, OnDestroy {
 
         this.marketsByCategory.forEach(i => {
           i.marketPairs.forEach(pair => {
-            pair.markets.forEach(m => this.marketsById.set(m.id, m));
+            pair.markets.forEach(m => this.marketPairsById.set(m.id, pair));
           });
         });
       }, err => this.errorService.handleError(err));
@@ -83,7 +85,6 @@ export class MatchComponent implements OnInit, OnDestroy {
     this.marketsToShow.forEach(i => {
       let atLeastOneOpened: boolean = false;
       i.marketPairs.forEach(p => {
-        p.closed = p.markets[0].closed;
         if (!p.closed) atLeastOneOpened = true;
       });
 
@@ -112,9 +113,12 @@ export class MatchComponent implements OnInit, OnDestroy {
 
   private updateMarkets(markets: IMarket[]) {
     markets.forEach(m => {
-      const existingMarket: IMarket | undefined = this.marketsById.get(m.id);
-      if (existingMarket) {
-        this.updateMarketEvent.emit({toUpdate: existingMarket, updateWith: m});
+      const marketPair: IMarketPair | undefined = this.marketPairsById.get(m.id);
+      if (marketPair) {
+        const existingMarket: IMarket | undefined = marketPair.markets.find(mp => mp.id === m.id);
+        if (existingMarket) {
+          this.updateMarketEvent.emit({toUpdate: existingMarket, updateWith: m, pair: marketPair});
+        }
       }
     });
     this.setClosedState();

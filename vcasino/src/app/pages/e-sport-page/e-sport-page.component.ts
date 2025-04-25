@@ -20,6 +20,7 @@ import {IMarket} from "../../models/esport/IMarket";
 import {IMatchUpdate} from "../../models/esport/IMatchUpdate";
 import {WalletService} from "../../services/wallet.service";
 import {BetHistoryComponent} from "../../components/esport/bet-history/bet-history.component";
+import {IMarketPair} from "../../models/esport/IMarketPair";
 
 @Component({
   selector: 'app-e-sport-page',
@@ -39,7 +40,6 @@ import {BetHistoryComponent} from "../../components/esport/bet-history/bet-histo
   templateUrl: './e-sport-page.component.html',
   styleUrl: './e-sport-page.component.scss'
 })
-// TODO check for UTC date
 export class ESportPageComponent implements OnInit, OnDestroy {
   @ViewChild(BetInfoComponent) betInfoComponent!: BetInfoComponent;
 
@@ -59,7 +59,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
   tournaments: ITournament[] = [];
   matches: IMatch[] = [];
 
-  private marketsById: Map<number, IMarket> = new Map<number, IMarket>();
+  private marketPairsById: Map<number, IMarketPair> = new Map<number, IMarketPair>();
   private matchDateIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(
@@ -87,14 +87,15 @@ export class ESportPageComponent implements OnInit, OnDestroy {
         this.tournaments.forEach(t => {
           t.image = environment.API_URL + '/v1/bet/images/' + t.image;
 
-          t.matches.forEach(m => {
+          t.matches
+            .forEach(m => {
             m.tournament = t;
             m.participant1.image = environment.API_URL + '/v1/bet/images/' + m.participant1.image;
             m.participant2.image = environment.API_URL + '/v1/bet/images/' + m.participant2.image;
             this.matches.push(m);
             this.setMatchDate(m);
 
-            m.winnerMatchMarkets.markets.forEach(market => this.marketsById.set(market.id, market));
+            m.winnerMatchMarkets.markets.forEach(market => this.marketPairsById.set(market.id, m.winnerMatchMarkets));
           });
         });
 
@@ -174,6 +175,9 @@ export class ESportPageComponent implements OnInit, OnDestroy {
       title: key,
       matches: group[key]
     }));
+
+    this.matchesByTitle.forEach(i => this.sortByDate(i.matches));
+
   }
 
   filterMatchesByTournament(tournament: ITournament | null) {
@@ -184,6 +188,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
       const foundTournament: ITournament | undefined = this.tournaments.find(t => t.id === tournament.id);
       const tournamentMatches: IMatch[] = foundTournament ? foundTournament.matches : [];
       this.matchesByTitle = [{title: `${tournament.discipline}. ${tournament.title}`, matches: tournamentMatches}];
+      this.sortByDate(tournamentMatches);
     }
   }
 
@@ -196,7 +201,12 @@ export class ESportPageComponent implements OnInit, OnDestroy {
       this.tournaments.filter(t => t.discipline === discipline).forEach(
         t => t.matches.forEach(m => tournamentMatches.push(m)));
       this.matchesByTitle = [{title: discipline, matches: tournamentMatches}];
+      this.sortByDate(tournamentMatches);
     }
+  }
+
+  private sortByDate(matches: IMatch[]): void {
+    matches.sort((a, b) => a.startDate - b.startDate);
   }
 
   toggleTournamentSidebar(show: boolean) {
@@ -242,15 +252,19 @@ export class ESportPageComponent implements OnInit, OnDestroy {
 
   private updateWinnerMatchMarkets(markets: IMarket[]) {
     markets.forEach(m => {
-      const existingMarket: IMarket | undefined = this.marketsById.get(m.id);
-      if (existingMarket) {
-        this.updateMarket({toUpdate: existingMarket, updateWith: m});
+      const marketPair: IMarketPair | undefined = this.marketPairsById.get(m.id);
+      if (marketPair) {
+        const existingMarket: IMarket | undefined = marketPair.markets.find(mp => mp.id === m.id);
+        if (existingMarket) {
+          this.updateMarket({toUpdate: existingMarket, updateWith: m, pair: marketPair});
+        }
       }
     })
   }
 
-  updateMarket(obj: { toUpdate: IMarket, updateWith: IMarket }) {
+  updateMarket(obj: { toUpdate: IMarket, updateWith: IMarket, pair: IMarketPair }): void {
     const oldOdds: number = obj.toUpdate.odds;
+
     obj.toUpdate.odds = obj.updateWith.odds;
     obj.toUpdate.closed = obj.updateWith.closed;
 
@@ -267,6 +281,10 @@ export class ESportPageComponent implements OnInit, OnDestroy {
       } else {
         this.betInfoComponent.updatePossibleWin();
       }
+    }
+
+    if (obj.pair.closed !== obj.toUpdate.closed) {
+      obj.pair.closed = obj.toUpdate.closed;
     }
   }
 }

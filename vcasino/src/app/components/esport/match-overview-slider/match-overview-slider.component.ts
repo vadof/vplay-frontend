@@ -51,9 +51,6 @@ export class MatchOverviewSliderComponent {
       scrollBy = -maxScroll;
     }
 
-    console.log(maxScroll);
-    console.log(currentScroll);
-
     this.scrollContainer.nativeElement.scrollBy({
       left: scrollBy,
       behavior: 'smooth'

@@ -38,8 +38,6 @@ export class BetHistoryComponent implements OnInit {
           const response: IPaginatedResponse<IBet> = res as IPaginatedResponse<IBet>;
           this.currentPage = response.page;
           this.totalPages = response.totalPages - 1;
-          console.log("Current page " + this.currentPage);
-          console.log("Total pages " + this.totalPages);
           this.initBets(response.data);
         }, err => {
           this.errorService.handleError(err);
