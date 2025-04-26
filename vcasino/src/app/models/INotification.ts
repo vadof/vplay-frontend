@@ -1,5 +1,5 @@
 export interface INotification {
   message: string;
-  type: 'BALANCE' | 'BET' | null;
+  type: 'BALANCE' | 'BET' | 'ERROR' | null;
   data: any;
 }

@@ -38,8 +38,12 @@ export class WebSocketService {
 
       this.stompClient.onConnect = () => {
         this.subscribeToMatches();
-        if (this.matchMarketsSubscription.matchId) {
+        if (this.matchMarketsSubscription.matchId !== null) {
           this.subscribeToMatchMarkets(this.matchMarketsSubscription.matchId);
+        }
+
+        if (this.pingIntervalId !== null) {
+          clearInterval(this.pingIntervalId);
         }
 
         this.pingIntervalId = setInterval(() => {
@@ -53,7 +57,7 @@ export class WebSocketService {
       };
 
       this.stompClient.onDisconnect = () => {
-        if (this.pingIntervalId) {
+        if (this.pingIntervalId !== null) {
           clearInterval(this.pingIntervalId);
           this.pingIntervalId = null;
         }
@@ -81,7 +85,10 @@ export class WebSocketService {
       this.winnerMarketsSubscription.unsubscribe();
     }
     this.unsubscribeFromMatchMarkets();
-    this.stompClient = null;
+    if (this.stompClient) {
+      this.stompClient.forceDisconnect();
+      this.stompClient = null;
+    }
   }
 
   unsubscribeFromMatchMarkets(): void {

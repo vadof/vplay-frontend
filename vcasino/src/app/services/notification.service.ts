@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {Event, EventSourcePolyfill, MessageEvent} from 'event-source-polyfill';
 import {BehaviorSubject, Observable} from "rxjs";
 import {CookieStorage} from "./cookie-storage.service";
 import {INotification} from "../models/INotification";
 import {AuthService} from "./auth.service";
+import {Client, IMessage, StompSubscription} from "@stomp/stompjs";
+import {v4 as uuidv4} from 'uuid';
 
 const emptyNotification: INotification = {
   message: '',
@@ -17,56 +18,103 @@ const emptyNotification: INotification = {
 })
 export class NotificationService {
 
+  private stompClient: Client | null = null;
+  private readonly wsUrl: string = environment.NOTIFICATIONS_WEBSOCKET_URL;
+
+  private notificationSubscription: StompSubscription | null = null;
   private notificationSubject: BehaviorSubject<INotification> = new BehaviorSubject<INotification>(emptyNotification);
   notifications$: Observable<INotification> = this.notificationSubject.asObservable();
-  private eventSource: EventSourcePolyfill | null = null;
+
+  private pingIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(private cookieStorage: CookieStorage,
               private authService: AuthService
-  ) {}
-
-  stopListening(): void {
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
-    }
+  ) {
   }
 
   startListening(): void {
-    if (this.eventSource) return;
-    const token: string | null = this.cookieStorage.getToken();
-    if (!token) return;
+    if (this.stompClient !== null) return;
 
-    const url: string = `${environment.API_URL.substring(0, environment.API_URL.indexOf('/api'))}/notifications/stream`;
-    this.eventSource = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      heartbeatTimeout: 300000 // 5 min
-    });
+    setTimeout(() => {
+      const token: string | null = this.cookieStorage.getToken();
+      if (!token) return;
 
-    this.eventSource.onmessage = (event: MessageEvent) => {
-      const notification: INotification = JSON.parse(event.data) as INotification;
-      this.notificationSubject.next(notification);
-    };
+      const topicId: string = uuidv4();
 
-    this.eventSource.onerror = (error: Event) => {
-      // @ts-ignore
-      if (error.status === 401) {
-        this.stopListening();
-        const refreshToken: string | null = this.cookieStorage.getRefreshToken();
-
-        if (refreshToken) {
-          this.authService.refreshToken(refreshToken).subscribe({
-            next: res => {
-              this.cookieStorage.saveToken(res.token);
-              this.cookieStorage.saveRefreshToken(res.refreshToken);
-              this.startListening();
-            }
-          })
+      this.stompClient = new Client({
+        brokerURL: this.wsUrl,
+        connectHeaders: {'Authorization': `Bearer ${token}`, topicId},
+        reconnectDelay: 15000,
+        heartbeatIncoming: 0,
+        heartbeatOutgoing: 0,
+        onConnect: (): void => {
+          this.subscribeToNotificationsTopic(topicId);
+          this.setPings();
+        },
+        onDisconnect: () => {
+          if (this.pingIntervalId !== null) {
+            clearInterval(this.pingIntervalId);
+            this.pingIntervalId = null;
+          }
         }
+      });
+
+      this.stompClient.activate();
+    }, 2000)
+  }
+
+  private subscribeToNotificationsTopic(topicId: string): void {
+    this.notificationSubscription = this.stompClient!.subscribe(`/topic/notifications/${topicId}`, (message: IMessage) => {
+      const notification: INotification = JSON.parse(message.body) as INotification;
+      if (notification.type === 'ERROR') {
+        this.handleError();
+      } else {
+        this.notificationSubject.next(notification);
       }
+
+    });
+  }
+
+  handleError(): void {
+    this.stopListening();
+    const refreshToken: string | null = this.cookieStorage.getRefreshToken();
+    if (refreshToken) {
+      this.authService.refreshToken(refreshToken).subscribe(
+        {
+          next: res => {
+            this.cookieStorage.saveToken(res.token);
+            this.cookieStorage.saveRefreshToken(res.refreshToken);
+            this.startListening();
+          },
+          error: error => {
+            console.log("Unable to subscribe to notifications")
+          }
+        });
     }
   }
 
+  stopListening(): void {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+    if (this.stompClient) {
+      this.stompClient.forceDisconnect();
+      this.stompClient = null;
+    }
+  }
+
+  private setPings(): void {
+    if (this.pingIntervalId !== null) {
+      clearInterval(this.pingIntervalId);
+    }
+
+    this.pingIntervalId = setInterval(() => {
+      if (this.stompClient && this.stompClient.connected) {
+        this.stompClient.publish({
+          destination: '/app/ping',
+          body: JSON.stringify({timestamp: Date.now()})
+        });
+      }
+    }, 10000);
+  }
 }
