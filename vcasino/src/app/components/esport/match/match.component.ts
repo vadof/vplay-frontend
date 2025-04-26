@@ -37,6 +37,7 @@ export class MatchComponent implements OnInit, OnDestroy {
   selectedMarketCategory: string = '';
 
   marketsByCategory: IMarketsByCategory[] = [];
+  marketsToShowCategory: IMarketsByCategory[] = [];
   marketsToShow: IMarketsByCategory[] = [];
   private marketPairsById: Map<number, IMarketPair> = new Map<number, IMarketPair>();
 
@@ -56,6 +57,7 @@ export class MatchComponent implements OnInit, OnDestroy {
             pair.markets.forEach(m => this.marketPairsById.set(m.id, pair));
           });
         });
+
       }, err => this.errorService.handleError(err));
 
     this.webSocket.subscribeToMatchMarkets(this.match.id);
@@ -70,19 +72,19 @@ export class MatchComponent implements OnInit, OnDestroy {
 
   private sortByType(marketType: string) {
     if (marketType === 'All markets') {
-      this.marketsToShow = this.marketsByCategory;
+      this.marketsToShowCategory = this.marketsByCategory;
     } else if (marketType === 'Winner') {
-      this.marketsToShow = this.marketsByCategory.filter(m => m.category.includes('Winner'));
+      this.marketsToShowCategory = this.marketsByCategory.filter(m => m.category.includes('Winner'));
     } else if (marketType === 'Total') {
-      this.marketsToShow = this.marketsByCategory.filter(m => m.category.includes('Total'));
+      this.marketsToShowCategory = this.marketsByCategory.filter(m => m.category.includes('Total'));
     } else if (marketType === 'Handicap') {
-      this.marketsToShow = this.marketsByCategory.filter(m => m.category.includes('Handicap'));
+      this.marketsToShowCategory = this.marketsByCategory.filter(m => m.category.includes('Handicap'));
     }
     this.setClosedState();
   }
 
   private setClosedState(): void {
-    this.marketsToShow.forEach(i => {
+    this.marketsToShowCategory.forEach(i => {
       let atLeastOneOpened: boolean = false;
       i.marketPairs.forEach(p => {
         if (!p.closed) atLeastOneOpened = true;
@@ -91,7 +93,7 @@ export class MatchComponent implements OnInit, OnDestroy {
       i.allClosed = !atLeastOneOpened;
     });
 
-    this.marketsToShow = this.marketsToShow.filter(i => !i.allClosed);
+    this.marketsToShow = this.marketsToShowCategory.filter(i => !i.allClosed);
   }
 
   selectMarketCategory(category: string) {

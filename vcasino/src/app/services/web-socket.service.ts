@@ -19,49 +19,75 @@ export class WebSocketService {
   matchMarkets$: Observable<IMarket[]> = this.matchMarketsSubject.asObservable();
 
   private winnerMarketsSubscription: StompSubscription | null = null;
-  private matchMarketsSubscription: StompSubscription | null = null;
+  private matchMarketsSubscription: {subscription: StompSubscription | null; matchId: number | null} = {
+    subscription: null, matchId: null
+  };
+
+  private pingIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor() {}
 
-  subscribeToMarketUpdates() {
+  subscribeToMarketUpdates(): void {
     if (this.stompClient === null) {
       this.stompClient = new Client({
         brokerURL: this.wsUrl,
         reconnectDelay: 5000,
-        heartbeatIncoming: 4000,
-        heartbeatOutgoing: 4000
+        heartbeatIncoming: 0,
+        heartbeatOutgoing: 0
       });
 
       this.stompClient.onConnect = () => {
         this.subscribeToMatches();
+        if (this.matchMarketsSubscription.matchId) {
+          this.subscribeToMatchMarkets(this.matchMarketsSubscription.matchId);
+        }
+
+        this.pingIntervalId = setInterval(() => {
+          if (this.stompClient && this.stompClient.connected) {
+            this.stompClient.publish({
+              destination: '/app/ping',
+              body: JSON.stringify({ timestamp: Date.now() })
+            });
+          }
+        }, 30000);
+      };
+
+      this.stompClient.onDisconnect = () => {
+        if (this.pingIntervalId) {
+          clearInterval(this.pingIntervalId);
+          this.pingIntervalId = null;
+        }
       };
 
       this.stompClient.activate();
     }
   }
 
-  private subscribeToMatches() {
+  private subscribeToMatches(): void {
     this.winnerMarketsSubscription = this.stompClient!.subscribe('/topic/matches', (message: IMessage) => {
       this.matchUpdateSubject.next(JSON.parse(message.body) as IMatchUpdate);
     });
   }
 
-  subscribeToMatchMarkets(matchId: number) {
-    this.matchMarketsSubscription = this.stompClient!.subscribe(`/topic/matches/${matchId}`, (message: IMessage) => {
+  subscribeToMatchMarkets(matchId: number): void {
+    this.matchMarketsSubscription.matchId = matchId;
+    this.matchMarketsSubscription.subscription = this.stompClient!.subscribe(`/topic/matches/${matchId}`, (message: IMessage) => {
       this.matchMarketsSubject.next(JSON.parse(message.body) as IMarket[]);
     });
   }
 
-  unsubscribe() {
+  unsubscribe(): void {
     if (this.winnerMarketsSubscription) {
       this.winnerMarketsSubscription.unsubscribe();
     }
     this.unsubscribeFromMatchMarkets();
+    this.stompClient = null;
   }
 
-  unsubscribeFromMatchMarkets() {
-    if (this.matchMarketsSubscription) {
-      this.matchMarketsSubscription.unsubscribe();
+  unsubscribeFromMatchMarkets(): void {
+    if (this.matchMarketsSubscription.subscription) {
+      this.matchMarketsSubscription.subscription.unsubscribe();
+      this.matchMarketsSubscription.matchId = null;
     }
   }
 }
