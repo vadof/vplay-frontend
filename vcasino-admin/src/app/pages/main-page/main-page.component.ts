@@ -10,6 +10,8 @@ import {FormsModule} from "@angular/forms";
 import {MainStatisticsComponent} from "../../components/main-statistics/main-statistics.component";
 import {SearchComponent} from "../../components/search/search.component";
 import {RegistrationFormComponent} from "../../components/registration-form/registration-form.component";
+import {IRegistrationStatistics} from "../../models/user/IRegistrationStatistics";
+import {IUserGeneralStatistics} from "../../models/user/IUserGeneralStatistics";
 
 @Component({
   selector: 'app-main-page',
@@ -32,6 +34,7 @@ export class MainPageComponent implements OnInit {
 
   errorMessage = '';
   userStatistics: { label: string, value: number }[] = [];
+  registrationStatistics: IRegistrationStatistics[] = [];
   userInformation: { label: string; value: any; clickable?: boolean }[] = [];
   currentUserInformation: IUserInformation | undefined;
   searchHistory: IUserInformation[] = [];
@@ -53,16 +56,18 @@ export class MainPageComponent implements OnInit {
   ngOnInit(): void {
     this.http.get('/v1/users/admin/statistics').then(
       res => {
-        const userStatistics: IUserStatistics = res as IUserStatistics
+        const userStatistics: IUserStatistics = res as IUserStatistics;
+        const generalStatistics: IUserGeneralStatistics = userStatistics.generalStatistics;
+        this.registrationStatistics = userStatistics.registrationStatistics;
         this.userStatistics = [
-          {label: 'Total Registered Users', value: userStatistics.registeredUsers},
-          {label: 'Users Registered Today', value: userStatistics.registeredUsersToday},
-          {label: 'Users Registered Last Week', value: userStatistics.registeredUsersLastWeek},
-          {label: 'Users Registered Last Month', value: userStatistics.registeredUsersLastMonth},
-          {label: 'Active Users', value: userStatistics.activeUsers},
-          {label: 'Users Invited by Others', value: userStatistics.registeredUsersInvitedByOthers},
-          {label: 'Users with OAuth', value: userStatistics.registeredUsersWithOAuth},
-          {label: 'Frozen Users', value: userStatistics.frozenUsers},
+          {label: 'Total Registered Users', value: generalStatistics.registeredUsers},
+          {label: 'Users Registered Today', value: generalStatistics.registeredUsersToday},
+          {label: 'Users Registered Last Week', value: generalStatistics.registeredUsersLastWeek},
+          {label: 'Users Registered Last Month', value: generalStatistics.registeredUsersLastMonth},
+          {label: 'Active Users', value: generalStatistics.activeUsers},
+          {label: 'Users Invited by Others', value: generalStatistics.registeredUsersInvitedByOthers},
+          {label: 'Users with OAuth', value: generalStatistics.registeredUsersWithOAuth},
+          {label: 'Frozen Users', value: generalStatistics.frozenUsers},
         ];
       },
       err => this.errorService.handleError(err)
@@ -126,6 +131,7 @@ export class MainPageComponent implements OnInit {
     }).replace(",", "");
 
     this.userInformation = [
+      {label: 'ID', value: userInformation.id},
       {label: 'Name:', value: userInformation.name ? userInformation.name : 'N/A'},
       {label: 'Username:', value: userInformation.username},
       {label: 'Email:', value: userInformation.email},

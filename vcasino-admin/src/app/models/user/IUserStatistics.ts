@@ -1,10 +1,7 @@
+import {IRegistrationStatistics} from "./IRegistrationStatistics";
+import {IUserGeneralStatistics} from "./IUserGeneralStatistics";
+
 export interface IUserStatistics {
-  registeredUsers: number;
-  registeredUsersToday: number;
-  registeredUsersLastWeek: number;
-  registeredUsersLastMonth: number;
-  registeredUsersInvitedByOthers: number;
-  registeredUsersWithOAuth: number;
-  frozenUsers: number;
-  activeUsers: number;
+  generalStatistics: IUserGeneralStatistics;
+  registrationStatistics: IRegistrationStatistics[];
 }

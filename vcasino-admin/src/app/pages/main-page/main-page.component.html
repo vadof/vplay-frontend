@@ -54,4 +54,14 @@
     </div>
   </div>
 
+  <div class="latest-users">
+    <h3 class="text-center">Latest Registered Users</h3>
+    <div *ngFor="let user of registrationStatistics" (click)="findUserByUsername(user.username)"
+         class="latest-user-item d-flex justify-content-between align-items-center fw-bold text-center">
+      <div>User#{{ user.userId }}</div>
+      <div>{{ user.username }}</div>
+      <div>{{ user.registerDate }}</div>
+    </div>
+  </div>
+
 </div>
