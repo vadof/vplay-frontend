@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, Renderer2} from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {CookieStorage} from "../../services/cookie-storage.service";
 import {IUser} from "../../models/auth/IUser";
@@ -6,6 +6,7 @@ import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {WalletService} from "../../services/wallet.service";
 import {NotificationService} from "../../services/notification.service";
 import {INotification} from "../../models/INotification";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,7 @@ import {INotification} from "../../models/INotification";
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   username: string | null = null;
   @Input({required: false}) hideRegisterBtn: boolean = false;
   @Input({required: false}) hideLoginBtn: boolean = false;
@@ -30,6 +31,7 @@ export class HeaderComponent implements OnInit {
   sidebarOpen: boolean = false;
   balance: string = '0.00';
 
+  private subscriptions: Subscription = new Subscription();
   notifications: {message: string, fadeOut: boolean}[] = [];
 
   constructor(
@@ -40,8 +42,9 @@ export class HeaderComponent implements OnInit {
   ) {
   }
 
-  logout() {
+  logout(): void {
     this.cookieStorage.signOut();
+    this.notificationService.stopListening();
   }
 
   ngOnInit(): void {
@@ -49,13 +52,17 @@ export class HeaderComponent implements OnInit {
     if (user) {
       this.username = user.username;
 
-      this.walletService.balance$.subscribe((updatedBalance: number) => {
-        this.balance = updatedBalance.toFixed(2);
-      });
+      this.subscriptions.add(
+        this.walletService.balance$.subscribe((updatedBalance: number) => {
+          this.balance = updatedBalance.toFixed(2);
+        })
+      );
 
-      this.notificationService.notifications$.subscribe((notification: INotification) => {
-        this.handleNotification(notification);
-      })
+      this.subscriptions.add(
+        this.notificationService.notifications$.subscribe((notification: INotification) => {
+          this.handleNotification(notification);
+        })
+      )
 
       this.walletService.initBalance();
 
@@ -64,6 +71,10 @@ export class HeaderComponent implements OnInit {
     } else {
       this.notificationService.stopListening();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   private handleNotification(notification: INotification) {

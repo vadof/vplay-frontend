@@ -1,17 +1,12 @@
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
-import {BehaviorSubject, Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {CookieStorage} from "./cookie-storage.service";
 import {INotification} from "../models/INotification";
 import {AuthService} from "./auth.service";
 import {Client, IMessage, StompSubscription} from "@stomp/stompjs";
 import {v4 as uuidv4} from 'uuid';
-
-const emptyNotification: INotification = {
-  message: '',
-  type: null,
-  data: null
-};
+import {WalletService} from "./wallet.service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +17,14 @@ export class NotificationService {
   private readonly wsUrl: string = environment.NOTIFICATIONS_WEBSOCKET_URL;
 
   private notificationSubscription: StompSubscription | null = null;
-  private notificationSubject: BehaviorSubject<INotification> = new BehaviorSubject<INotification>(emptyNotification);
+  private notificationSubject: Subject<INotification> = new Subject<INotification>();
   notifications$: Observable<INotification> = this.notificationSubject.asObservable();
 
   private pingIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(private cookieStorage: CookieStorage,
-              private authService: AuthService
+              private authService: AuthService,
+              private walletService: WalletService
   ) {
   }
 
@@ -69,6 +65,10 @@ export class NotificationService {
       if (notification.type === 'ERROR') {
         this.handleError();
       } else {
+        if (notification.type === 'BALANCE') {
+          this.walletService.setBalance(notification.data);
+        }
+
         this.notificationSubject.next(notification);
       }
 
