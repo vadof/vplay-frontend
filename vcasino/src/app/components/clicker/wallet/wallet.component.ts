@@ -8,6 +8,7 @@ import {WalletService} from "../../../services/wallet.service";
 import {ErrorService} from "../../../services/error.service";
 import {IAccountWalletResponse} from "../../../models/clicker/IAccountWalletResponse";
 import {ConfettiService} from "../../../services/confetti.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-wallet',
@@ -37,6 +38,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   private vDollars: number = 0;
   successMessage: string = '';
   successTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(private http: HttpService,
               private walletService: WalletService,
@@ -49,18 +51,21 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.switchOption('w');
     this.intervalId = setInterval(() => this.calculateSliderMax(), 2000);
 
-    this.walletService.balance$.subscribe((updatedBalance) => {
-      this.vDollars = updatedBalance;
-      if (this.selectedOption === 'd') {
-        this.balance = this.vDollars;
-        this.calculateSliderMax();
-      }
-    });
+    this.subscriptions.add(
+      this.walletService.balance$.subscribe((updatedBalance) => {
+        this.vDollars = updatedBalance;
+        if (this.selectedOption === 'd') {
+          this.balance = this.vDollars;
+          this.calculateSliderMax();
+        }
+      })
+    );
   }
 
   ngOnDestroy() {
     if (this.intervalId) clearInterval(this.intervalId);
     if (this.successTimeoutId) clearTimeout(this.successTimeoutId);
+    this.subscriptions.unsubscribe();
   }
 
   switchOption(option: 'w' | 'd') {

@@ -8,6 +8,7 @@ import {HttpService} from "../../../services/http.service";
 import {ErrorService} from "../../../services/error.service";
 import {WebSocketService} from "../../../services/web-socket.service";
 import {IMarketPair} from "../../../models/esport/IMarketPair";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-match',
@@ -31,6 +32,7 @@ export class MatchComponent implements OnInit, OnDestroy {
     updateWith: IMarket,
     pair: IMarketPair
   }>;
+  private subscriptions: Subscription = new Subscription();
 
   marketCategories: string[] = ['All markets', 'Winner', 'Total', 'Handicap'];
 
@@ -61,13 +63,16 @@ export class MatchComponent implements OnInit, OnDestroy {
       }, err => this.errorService.handleError(err));
 
     this.webSocket.subscribeToMatchMarkets(this.match.id);
-    this.webSocket.matchMarkets$.subscribe((markets: IMarket[]) => {
-      this.updateMarkets(markets);
-    });
+    this.subscriptions.add(
+      this.webSocket.matchMarkets$.subscribe((markets: IMarket[]) => {
+        this.updateMarkets(markets);
+      })
+    );
   }
 
   ngOnDestroy() {
     this.webSocket.unsubscribeFromMatchMarkets();
+    this.subscriptions.unsubscribe();
   }
 
   private sortByType(marketType: string) {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {HeaderComponent} from "../../components/header/header.component";
 import {NgForOf, NgIf} from "@angular/common";
@@ -11,6 +11,7 @@ import {SearchComponent} from "../../components/search/search.component";
 import {IWalletInformation} from "../../models/wallet/IWalletInformation";
 import {ChartComponent} from "../../components/chart/chart.component";
 import {FormsModule} from "@angular/forms";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-wallet-page',
@@ -29,7 +30,8 @@ import {FormsModule} from "@angular/forms";
   templateUrl: './wallet-page.component.html',
   styleUrl: './wallet-page.component.scss'
 })
-export class WalletPageComponent implements OnInit {
+export class WalletPageComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription = new Subscription();
   errorMessage: string = '';
 
   statistics: { label: string, value: number }[] = [];
@@ -49,9 +51,11 @@ export class WalletPageComponent implements OnInit {
 
   constructor(private http: HttpService,
               private errorService: ErrorService) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
-    });
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message) => {
+        this.errorMessage = message;
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -72,6 +76,10 @@ export class WalletPageComponent implements OnInit {
       },
       err => this.errorService.handleError(err)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   clearError(): void {

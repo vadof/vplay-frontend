@@ -68,16 +68,20 @@ export class WebSocketService {
   }
 
   private subscribeToMatches(): void {
-    this.winnerMarketsSubscription = this.stompClient!.subscribe('/topic/matches', (message: IMessage) => {
-      this.matchUpdateSubject.next(JSON.parse(message.body) as IMatchUpdate);
-    });
+    if (this.stompClient) {
+      this.winnerMarketsSubscription = this.stompClient.subscribe('/topic/matches', (message: IMessage) => {
+        this.matchUpdateSubject.next(JSON.parse(message.body) as IMatchUpdate);
+      });
+    }
   }
 
   subscribeToMatchMarkets(matchId: number): void {
-    this.matchMarketsSubscription.matchId = matchId;
-    this.matchMarketsSubscription.subscription = this.stompClient!.subscribe(`/topic/matches/${matchId}`, (message: IMessage) => {
-      this.matchMarketsSubject.next(JSON.parse(message.body) as IMarket[]);
-    });
+    if (this.stompClient) {
+      this.matchMarketsSubscription.matchId = matchId;
+      this.matchMarketsSubscription.subscription = this.stompClient.subscribe(`/topic/matches/${matchId}`, (message: IMessage) => {
+        this.matchMarketsSubject.next(JSON.parse(message.body) as IMarket[]);
+      });
+    }
   }
 
   unsubscribe(): void {

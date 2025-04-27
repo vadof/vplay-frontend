@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HeaderComponent} from "../../components/header/header.component";
 import {HttpService} from "../../services/http.service";
 import {IUserStatistics} from "../../models/user/IUserStatistics";
@@ -12,6 +12,7 @@ import {SearchComponent} from "../../components/search/search.component";
 import {RegistrationFormComponent} from "../../components/registration-form/registration-form.component";
 import {IRegistrationStatistics} from "../../models/user/IRegistrationStatistics";
 import {IUserGeneralStatistics} from "../../models/user/IUserGeneralStatistics";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-main-page',
@@ -30,7 +31,9 @@ import {IUserGeneralStatistics} from "../../models/user/IUserGeneralStatistics";
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss'
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit, OnDestroy {
+
+  private subscriptions: Subscription = new Subscription();
 
   errorMessage = '';
   userStatistics: { label: string, value: number }[] = [];
@@ -48,9 +51,11 @@ export class MainPageComponent implements OnInit {
 
   constructor(private http: HttpService,
               private errorService: ErrorService) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
-    });
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message) => {
+        this.errorMessage = message;
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -72,6 +77,10 @@ export class MainPageComponent implements OnInit {
       },
       err => this.errorService.handleError(err)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   searchUser(searchOutput: {option: string, value: string}) {

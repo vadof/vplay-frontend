@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {HeaderComponent} from "../../components/header/header.component";
 import {NgIf} from "@angular/common";
@@ -8,6 +8,7 @@ import {ErrorService} from "../../services/error.service";
 import {GeneralStatisticsComponent} from "../../components/clicker/general-statistics/general-statistics.component";
 import {AccountInformationComponent} from "../../components/clicker/account-information/account-information.component";
 import {TaskStatisticsComponent} from "../../components/clicker/tasks/task-statistics.component";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-clicker-page',
@@ -25,14 +26,21 @@ import {TaskStatisticsComponent} from "../../components/clicker/tasks/task-stati
   templateUrl: './clicker-page.component.html',
   styleUrl: './clicker-page.component.scss'
 })
-export class ClickerPageComponent {
+export class ClickerPageComponent implements OnDestroy {
   errorMessage: string = '';
   section: 'general' | 'account' | 'tasks' = 'general';
+  private subscriptions: Subscription = new Subscription();
 
   constructor(private errorService: ErrorService) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
-    });
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message) => {
+        this.errorMessage = message;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   switchSection(section: 'general' | 'account' | 'tasks') {

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {ErrorService} from "../../services/error.service";
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {FormsModule} from "@angular/forms";
@@ -11,6 +11,7 @@ import {GeneralStatisticsComponent} from "../../components/esport/general-statis
 import {TaskStatisticsComponent} from "../../components/clicker/tasks/task-statistics.component";
 import {TournamentStatisticsComponent} from "../../components/esport/tournament-statistics/tournament-statistics.component";
 import {MatchStatisticsComponent} from "../../components/esport/match-statistics/match-statistics.component";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-e-sport-page',
@@ -32,15 +33,22 @@ import {MatchStatisticsComponent} from "../../components/esport/match-statistics
   templateUrl: './e-sport-page.component.html',
   styleUrl: './e-sport-page.component.scss'
 })
-export class ESportPageComponent {
+export class ESportPageComponent implements OnDestroy {
   errorMessage: string = '';
-  section: 'general' | 'tournaments' | 'matches' | 'user' = 'user';
+  section: 'general' | 'tournaments' | 'matches' | 'user' = 'general';
   selectedTournamentId: number | null = null;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(private errorService: ErrorService) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
-    });
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message) => {
+        this.errorMessage = message;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   switchSection(section: 'general' | 'tournaments' | 'matches' | 'user') {

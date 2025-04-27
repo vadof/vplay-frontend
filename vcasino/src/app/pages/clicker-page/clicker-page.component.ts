@@ -18,6 +18,7 @@ import {numberFormatter} from "../../utils/clicker-utils";
 import {IAccountResponse} from "../../models/clicker/IAccountResponse";
 import {ISectionUpgrades} from "../../models/clicker/ISectionUpgrades";
 import {WalletComponent} from "../../components/clicker/wallet/wallet.component";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-clicker-page',
@@ -57,14 +58,17 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
 
   passiveEarnInterval: ReturnType<typeof setInterval> | null = null;
   energyIntervalId: ReturnType<typeof setInterval> | null = null;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private http: HttpService,
     private errorService: ErrorService
   ) {
-    this.errorService.error$.subscribe((message) => {
-      this.errorMessage = message;
-    });
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message) => {
+        this.errorMessage = message;
+      })
+    );
   }
 
   ngOnInit() {
@@ -90,6 +94,7 @@ export class ClickerPageComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.passiveEarnInterval) clearInterval(this.passiveEarnInterval);
     if (this.energyIntervalId) clearInterval(this.energyIntervalId);
+    this.subscriptions.unsubscribe();
   }
 
   private updateAccountValues(account: IAccount): void {

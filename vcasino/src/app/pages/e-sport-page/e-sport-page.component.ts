@@ -21,6 +21,7 @@ import {IMatchUpdate} from "../../models/esport/IMatchUpdate";
 import {WalletService} from "../../services/wallet.service";
 import {BetHistoryComponent} from "../../components/esport/bet-history/bet-history.component";
 import {IMarketPair} from "../../models/esport/IMarketPair";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-e-sport-page',
@@ -61,6 +62,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
 
   private marketPairsById: Map<number, IMarketPair> = new Map<number, IMarketPair>();
   private matchDateIntervalId: ReturnType<typeof setInterval> | null = null;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private http: HttpService,
@@ -68,19 +70,27 @@ export class ESportPageComponent implements OnInit, OnDestroy {
     private walletService: WalletService,
     private errorService: ErrorService
   ) {
-    this.walletService.balance$.subscribe((updatedBalance: number) => {
-      this.balance = updatedBalance;
-      this.formattedBalance = this.balance.toFixed(2);
-    });
-    this.errorService.error$.subscribe((message: string) => this.errorMessage = message);
+    this.subscriptions.add(
+      this.walletService.balance$.subscribe((updatedBalance: number) => {
+        this.balance = updatedBalance;
+        this.formattedBalance = this.balance.toFixed(2);
+      })
+    );
+
+    this.subscriptions.add(
+      this.errorService.error$.subscribe((message: string) => this.errorMessage = message)
+    );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.setRealViewportHeight();
     this.webSocket.subscribeToMarketUpdates();
-    this.webSocket.matchUpdate$.subscribe((matchUpdate: IMatchUpdate) => {
-      this.handleMatchUpdate(matchUpdate);
-    })
+
+    this.subscriptions.add(
+      this.webSocket.matchUpdate$.subscribe((matchUpdate: IMatchUpdate) => {
+        this.handleMatchUpdate(matchUpdate);
+      })
+    );
 
     this.http.get('/v1/bet/matches').then(
       res => {
@@ -101,7 +111,6 @@ export class ESportPageComponent implements OnInit, OnDestroy {
         });
 
         this.filterMatchesDefault();
-        this.webSocket.subscribeToMarketUpdates();
 
         const now: Date = new Date();
         const msUntilNextMinute: number = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
@@ -132,6 +141,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
     this.webSocket.unsubscribe();
     if (this.matchDateIntervalId) clearInterval(this.matchDateIntervalId);
     document.body.style.overflowY = 'auto';
+    this.subscriptions.unsubscribe();
   }
 
   clearError() {
