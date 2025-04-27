@@ -270,6 +270,7 @@ $sidebar-width: 15rem;
   position: absolute;
   z-index: 2;
   right: 2rem;
+  overflow-x: hidden;
 
   @media (max-width: 1000px) {
     right: 1rem;
