@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ErrorPopupComponent} from "../../components/error-popup/error-popup.component";
 import {HeaderComponent} from "../../components/header/header.component";
 import {NgForOf, NgIf} from "@angular/common";
@@ -76,6 +76,7 @@ export class ESportPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.setRealViewportHeight();
     this.webSocket.subscribeToMarketUpdates();
     this.webSocket.matchUpdate$.subscribe((matchUpdate: IMatchUpdate) => {
       this.handleMatchUpdate(matchUpdate);
@@ -115,6 +116,16 @@ export class ESportPageComponent implements OnInit, OnDestroy {
 
       }, err => this.errorService.handleError(err));
     document.body.style.overflowY = 'hidden';
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.setRealViewportHeight();
+  }
+
+  private setRealViewportHeight(): void {
+    const vh: number = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
   }
 
   ngOnDestroy() {

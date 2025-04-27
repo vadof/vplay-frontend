@@ -59,7 +59,7 @@ app-tournament-sidebar {
   margin: 0 10px;
 
   overflow-y: scroll;
-  height: calc(100vh - 79px);
+  height: calc(var(--vh, 1vh) * 100 - 79px);
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -128,7 +128,7 @@ app-bet-info {
   .main-section-wrapper {
     max-width: 65%;
     width: 100%;
-    height: calc(100vh - 140px);
+    height: calc(var(--vh, 1vh) * 100 - 140px);
   }
 
   app-bet-info {
@@ -159,7 +159,7 @@ app-bet-info {
 
   .main-section-wrapper {
     max-width: 100%;
-    height: calc(100vh - 180px);
+    height: calc(var(--vh, 1vh) * 100 - 180px);
     padding: 0 3px 0 5px;
     margin: 0 3px 0 5px;
   }
